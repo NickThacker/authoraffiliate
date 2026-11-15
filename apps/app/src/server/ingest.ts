@@ -279,7 +279,10 @@ async function findPartner(
       }
     }
     if (key === "email") {
-      const [lead] = await tx
+      // a lead that came from a link is a visit: like a cookie it only claims a payment inside the window.
+      // An old link lead must not claim an existing customer's renewal. Leads with only a partner code (server
+      // API) have no click and no window; a lead sent with the billing customer id matches above, by customer.
+      const leads = await tx
         .select({ referral, partner })
         .from(referral)
         .innerJoin(partner, eq(partner.id, referral.partnerId))
@@ -291,7 +294,13 @@ async function findPartner(
           ),
         )
         .orderBy(desc(referral.createdAt))
-        .limit(1);
+        .limit(5);
+      const lead = leads.find(
+        (l) =>
+          !l.referral.clickId ||
+          l.referral.createdAt.getTime() >=
+            Date.now() - (byId.get(l.referral.programId)?.cookieDays ?? 0) * 86_400_000,
+      );
       if (lead)
         return {
           partner: lead.partner,
@@ -837,6 +846,9 @@ export async function reverseFor(
   refundKey: string,
   reason: string,
 ): Promise<string | null> {
+  // Stripe reports one refund under the charge id and again under the payment intent: once this refund has
+  // fully reversed the sale, the repeat must not cut the referral's revenue a second time
+  if (c.status === "reversed" && c.heldReason === reason) return null;
   const share = refundShare(c.amount, charged, refunded);
   const prior = await tx
     .select({

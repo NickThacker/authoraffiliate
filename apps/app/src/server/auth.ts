@@ -89,15 +89,20 @@ export const auth = betterAuth({
     // the real owner's password reset must sign every other session out
     revokeSessionsOnPasswordReset: true,
     sendResetPassword: async ({ user: u, url }) => {
-      await sendNotice(u.email, `Reset your ${PRODUCT.name} password`, {
-        brandName: PRODUCT.name,
-        preview: "Reset your password",
-        title: "Reset your password",
-        paragraphs: [
-          "Someone asked to reset the password for this account. If that was you, use the button below. The link expires in one hour.",
-        ],
-        cta: { label: "Reset password", href: url },
-      });
+      await sendNotice(
+        u.email,
+        `Reset your ${PRODUCT.name} password`,
+        {
+          brandName: PRODUCT.name,
+          preview: "Reset your password",
+          title: "Reset your password",
+          paragraphs: [
+            "Someone asked to reset the password for this account. If that was you, use the button below. The link expires in one hour.",
+          ],
+          cta: { label: "Reset password", href: url },
+        },
+        { account: true },
+      );
     },
   },
   // sign-in works unverified; claiming an existing partner record requires a verified email (partners.ts)
@@ -106,15 +111,20 @@ export const auth = betterAuth({
     // the link only verifies: signing in here would skip two-factor for anyone who can read the inbox
     autoSignInAfterVerification: false,
     sendVerificationEmail: async ({ user: u, url }) => {
-      await sendNotice(u.email, `Confirm your email for ${PRODUCT.name}`, {
-        brandName: PRODUCT.name,
-        preview: "Confirm your email",
-        title: "Confirm your email",
-        paragraphs: [
-          "Use the button below to confirm this address. If you didn't ask for this, you can ignore this email.",
-        ],
-        cta: { label: "Confirm email", href: url },
-      });
+      await sendNotice(
+        u.email,
+        `Confirm your email for ${PRODUCT.name}`,
+        {
+          brandName: PRODUCT.name,
+          preview: "Confirm your email",
+          title: "Confirm your email",
+          paragraphs: [
+            "Use the button below to confirm this address. If you didn't ask for this, you can ignore this email.",
+          ],
+          cta: { label: "Confirm email", href: url },
+        },
+        { account: true },
+      );
     },
   },
   socialProviders: Object.fromEntries(

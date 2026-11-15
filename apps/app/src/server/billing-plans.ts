@@ -1,5 +1,5 @@
 import { commission, member, program, user, workspace } from "@openpromoter/db";
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, eq, gte, lt, ne, sql } from "drizzle-orm";
 import type Stripe from "stripe";
 import { PRODUCT } from "@/lib/config";
 import { lookupKey, PLANS, type PlanId, planById } from "@/lib/plans";
@@ -11,18 +11,53 @@ import { env, isHosted } from "./env";
 import { baseSale, ecbRates, sumIn } from "./fx";
 import { type BillingRegion, gstOn, gstRates, regionOf, sameRates } from "./gst";
 
-export async function monthlyUsage(workspaceId: string) {
-  const start = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1));
+/** The first moment (UTC) of the month `back` months before the one `now` is in. */
+export const monthStart = (back: number, now = new Date()) =>
+  new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - back, 1));
+
+/** Partner revenue in USD for the current month, or a full month `back` months ago. */
+export async function monthlyUsage(workspaceId: string, back = 0) {
+  const start = monthStart(back);
   // plan limits are in USD: each program's sales in its own currency, then into USD
   const rows = await db()
     .select({ currency: program.currency, n: sql<number>`coalesce(sum(${baseSale}),0)::float8` })
     .from(commission)
     .innerJoin(program, eq(program.id, commission.programId))
     .where(
-      and(eq(program.workspaceId, workspaceId), eq(commission.test, false), gte(commission.createdAt, start)),
+      and(
+        eq(program.workspaceId, workspaceId),
+        eq(commission.test, false),
+        ne(commission.status, "reversed"),
+        gte(commission.createdAt, start),
+        back > 0 ? lt(commission.createdAt, monthStart(back - 1)) : undefined,
+      ),
     )
     .groupBy(program.currency);
   return sumIn(rows, "usd", await ecbRates());
+}
+
+/** Full months in a row over the plan's limit before the dashboard asks for an upgrade. */
+export const OVER_MONTHS = 2;
+/** True when every one of the last full months is over the limit (and there are OVER_MONTHS of them). */
+export const mustUpgrade = (limit: number, pastMonths: number[]) =>
+  pastMonths.length >= OVER_MONTHS && pastMonths.every((u) => u > limit);
+
+/**
+ * Cloud only. After OVER_MONTHS full months over the plan's limit, the founder's dashboard shows an
+ * upgrade screen. Tracking, the partner portal, payouts and billing keep working.
+ */
+export async function upgradeRequired(workspaceId: string) {
+  if (!isHosted()) return null;
+  const [ws] = await db()
+    .select({ plan: workspace.plan })
+    .from(workspace)
+    .where(eq(workspace.id, workspaceId));
+  const plan = planById(ws?.plan ?? "free");
+  if (plan.id === PLANS.at(-1)?.id) return null; // ponytail: the top plan has nowhere to go, sales handles it
+  const past = await Promise.all(
+    Array.from({ length: OVER_MONTHS }, (_, i) => monthlyUsage(workspaceId, i + 1)),
+  );
+  return mustUpgrade(plan.revenueLimit, past) ? { plan, lastMonth: past[0] ?? 0 } : null;
 }
 
 /** Self-host has no limits. Cloud warns over the limit but never stops tracking or payouts. */

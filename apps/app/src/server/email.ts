@@ -7,7 +7,7 @@ import {
   renderReport,
   reportText,
 } from "@openpromoter/emails";
-import { and, eq } from "drizzle-orm";
+import { and, eq, like, or } from "drizzle-orm";
 import nodemailer from "nodemailer";
 import { createId } from "@/lib/id";
 import { db } from "./db";
@@ -25,6 +25,8 @@ export interface Mail {
   fromName?: string;
   /** One-click unsubscribe link for optional emails (List-Unsubscribe, RFC 8058). */
   unsubscribe?: string;
+  /** Sign-in emails (confirm, reset): a past spam complaint doesn't block them, only a hard bounce does. */
+  account?: boolean;
 }
 
 /** EMAIL_FROM is "Name <address>" or a bare address. */
@@ -101,6 +103,11 @@ export async function sendMail(mail: Mail): Promise<{ delivered: boolean }> {
     await logEmail(mail, "not_sent", null, "Reserved address, never delivered");
     return { delivered: false };
   }
+  // an address that hard-bounced or marked us as spam never gets another email: repeats are what get SES paused
+  if (await blocked(mail.to, mail.account)) {
+    await logEmail(mail, "not_sent", null, "Address bounced or complained before");
+    return { delivered: false };
+  }
   try {
     const r = await deliver(mail);
     await logEmail(mail, r.delivered ? "sent" : "not_sent", r.messageId);
@@ -109,6 +116,25 @@ export async function sendMail(mail: Mail): Promise<{ delivered: boolean }> {
     await logEmail(mail, "failed", null, (e as Error).message);
     throw e;
   }
+}
+
+/** True when SES reported a permanent bounce or a spam complaint for this address (ses-events.ts). */
+async function blocked(to: string, account = false) {
+  const [row] = await db()
+    .select({ id: emailLog.id })
+    .from(emailLog)
+    .where(
+      and(
+        // the log stores addresses lowercased (logEmail)
+        eq(emailLog.to, to.trim().toLowerCase()),
+        or(
+          account ? undefined : eq(emailLog.status, "complained"),
+          and(eq(emailLog.status, "bounced"), like(emailLog.detail, "Permanent%")),
+        ),
+      ),
+    )
+    .limit(1);
+  return !!row;
 }
 
 /** Sends through Resend when RESEND_API_KEY is set, SMTP when SMTP_URL is set, else logs (dev). */
@@ -155,6 +181,7 @@ export interface SendOpts {
   programId?: string | null;
   fromName?: string;
   unsubscribe?: string;
+  account?: boolean;
 }
 
 export async function sendNotice(to: string, subject: string, props: NoticeProps, opts: SendOpts = {}) {

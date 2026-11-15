@@ -8,6 +8,7 @@ import {
   invitation,
   member,
   PROGRAM_CATEGORIES,
+  partner,
   partnerGroup,
   payout,
   program,
@@ -16,12 +17,12 @@ import {
   webhookDelivery,
   webhookEndpoint,
 } from "@openpromoter/db";
-import { and, count, eq, sql } from "drizzle-orm";
+import { and, count, eq, isNotNull, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { encrypt, randomToken, sha256 } from "@/lib/crypto";
 import { createId } from "@/lib/id";
-import { toMinor } from "@/lib/money";
+import { minorFactor, percentBp, toMinor } from "@/lib/money";
 import { priceLabel } from "@/lib/program-labels";
 import { API_SCOPES } from "@/lib/scopes";
 import { subdomainRoot } from "@/lib/subdomain";
@@ -43,6 +44,8 @@ import { env, isHosted } from "@/server/env";
 import { EVENT_TYPES } from "@/server/events";
 import { rebaseProgram } from "@/server/fx";
 import { enqueue } from "@/server/jobs";
+import { assertFounderVerified } from "@/server/partners";
+import { limit } from "@/server/ratelimit";
 import { createProgramFromUrl } from "@/server/setup";
 import { connectStripeKey, importStripe, setWebhookSecret } from "@/server/stripe-service";
 
@@ -87,6 +90,21 @@ export async function updateProgramAction(programId: string, input: Record<strin
     const ctx = await actionCtx(programId, "program.write");
     const v = programSchema.parse(input);
     const cur = v.currency.toLowerCase();
+    if (v.commissionType === "percent") {
+      percentBp(v.commissionValue);
+      if (v.commissionAfterValue) percentBp(v.commissionAfterValue);
+    }
+    // partner rates are stored in the program's unit: basis points for percent, minor units for fixed
+    if (v.commissionType !== ctx.program.commissionType) {
+      const [own] = await db()
+        .select({ n: count() })
+        .from(partner)
+        .where(and(eq(partner.programId, programId), isNotNull(partner.commissionOverride)));
+      if (own?.n)
+        throw new Error(
+          `${own.n} partners have their own rate. Clear their rates before switching between percent and fixed.`,
+        );
+    }
     await db()
       .update(program)
       .set({
@@ -130,6 +148,19 @@ export async function updateProgramAction(programId: string, input: Record<strin
       })
       .where(eq(program.id, programId));
     await rebaseProgram(programId, ctx.program.currency, cur);
+    // fixed partner and product rates keep the number the founder typed, like the program's own rate
+    const scale = minorFactor(cur) / minorFactor(ctx.program.currency);
+    if (scale !== 1) {
+      if (v.commissionType === "fixed")
+        await db()
+          .update(partner)
+          .set({ commissionOverride: sql`round(${partner.commissionOverride} * ${scale}::float8)` })
+          .where(and(eq(partner.programId, programId), isNotNull(partner.commissionOverride)));
+      const products = ctx.program.productRates.map((r) =>
+        r.type === "fixed" ? { ...r, value: Math.round(r.value * scale) } : r,
+      );
+      await db().update(program).set({ productRates: products }).where(eq(program.id, programId));
+    }
     await audit(ctx.program.workspaceId, ctx.actor, "program.update", { type: "program", id: programId });
     rv(programId);
     return true;
@@ -154,7 +185,7 @@ export async function saveGroupAction(
     const values = {
       name: v.name,
       commissionType: v.rate ? ("percent" as const) : null,
-      commissionValue: v.rate ? Math.round(Number(v.rate) * 100) : null,
+      commissionValue: v.rate ? percentBp(v.rate) : null,
       promoteAtRevenue: v.promoteAt ? toMinor(v.promoteAt, ctx.program.currency) : null,
     };
     if (v.id)
@@ -715,6 +746,8 @@ export async function createApiKeyAction(programId: string, input: { name: strin
     const v = z
       .object({ name: z.string().min(1).max(60), scopes: z.array(z.enum(API_SCOPES)).min(1) })
       .parse(input);
+    // an API key can add partners, and each gets an email from our sender: same guard as invites
+    await assertFounderVerified(ctx.user);
     const raw = `op_${env.HOSTED_MODE === "true" ? "live" : "sk"}_${randomToken(24)}`;
     await db()
       .insert(apiKey)
@@ -754,6 +787,8 @@ export async function revokeApiKeyAction(programId: string, id: string) {
 
 /* ------------------------------------------------------------------ team */
 
+const TEAM_INVITES_PER_DAY = 20;
+
 export async function inviteMemberAction(
   programId: string,
   input: { email: string; role: "admin" | "finance" | "viewer" | "owner" },
@@ -764,6 +799,13 @@ export async function inviteMemberAction(
       .object({ email: z.email(), role: z.enum(["owner", "admin", "finance", "viewer"]) })
       .parse(input);
     if (v.role === "owner" && ctx.role !== "owner") throw new Error("Only owners can add owners");
+    // the email names the inviter and the program: the same spam guard as partner invites
+    await assertFounderVerified(ctx.user);
+    if (
+      isHosted() &&
+      !(await limit(`team-invite:${ctx.program.workspaceId}`, TEAM_INVITES_PER_DAY, 86_400_000)).ok
+    )
+      throw new Error(`You can send ${TEAM_INVITES_PER_DAY} team invites a day. Try again tomorrow.`);
     const token = randomToken(24);
     await db()
       .insert(invitation)

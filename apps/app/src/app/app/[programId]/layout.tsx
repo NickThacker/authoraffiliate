@@ -3,10 +3,13 @@ import { and, eq, sql } from "drizzle-orm";
 import Link from "next/link";
 import { DemoBanner } from "@/components/demo-banner";
 import { AppShell } from "@/components/shell/app-shell";
+import { formatMoney } from "@/lib/money";
 import { isAdmin } from "@/server/admin";
+import { upgradeRequired } from "@/server/billing-plans";
 import { programCtx, userPrograms } from "@/server/context";
 import { db } from "@/server/db";
-import { isDemoUser } from "@/server/demo";
+import { DEMO_SLUG, demoOn, isDemoUser } from "@/server/demo";
+import { UpgradeWall } from "./upgrade-wall";
 
 export default async function ProgramLayout({
   children,
@@ -19,7 +22,9 @@ export default async function ProgramLayout({
   const ctx = await programCtx(programId);
   const programs = await userPrograms(ctx.user.id);
   const count = async (q: Promise<{ n: number }[]>) => (await q)[0]?.n ?? 0;
-  const [pending, suggestions, payouts, flags, [ws]] = await Promise.all([
+  // the public demo has sample revenue far over Free: it is never asked to upgrade
+  const demo = demoOn() && ctx.program.slug === DEMO_SLUG;
+  const [pending, suggestions, payouts, flags, [ws], wall] = await Promise.all([
     count(
       db()
         .select({ n: sql<number>`count(*)::int` })
@@ -48,6 +53,7 @@ export default async function ProgramLayout({
       .select({ status: workspace.billingStatus })
       .from(workspace)
       .where(eq(workspace.id, ctx.program.workspaceId)),
+    demo ? null : upgradeRequired(ctx.program.workspaceId),
   ]);
   // a failed renewal is easy to miss on the billing page alone: owners see it on every page until it is fixed
   const failed = ws?.status === "past_due" && ctx.role === "owner";
@@ -74,7 +80,19 @@ export default async function ProgramLayout({
           to keep your plan.
         </p>
       ) : null}
-      {children}
+      {wall ? (
+        <UpgradeWall
+          programId={programId}
+          planName={wall.plan.name}
+          limit={formatMoney(wall.plan.revenueLimit, "usd", { whole: true })}
+          lastMonth={formatMoney(Math.round(wall.lastMonth), "usd", { whole: true })}
+          owner={ctx.role === "owner"}
+        >
+          {children}
+        </UpgradeWall>
+      ) : (
+        children
+      )}
     </AppShell>
   );
 }

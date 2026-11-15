@@ -872,7 +872,7 @@ test("recruiter: add someone, draft invite, send, dismiss, AI-only actions", asy
   await expect(page.locator("li", { hasText: "Dan Dismiss" })).toHaveCount(0);
 
   await page.getByRole("checkbox", { name: "Select Pat Personal" }).check();
-  await page.getByRole("button", { name: "Personalise" }).click();
+  await page.getByRole("button", { name: "Personalize" }).click();
   await expectToast(page, /needs an AI provider/, "error");
   await expect(page.getByText(/Searching the web for creators needs an Anthropic API key/)).toBeVisible();
 

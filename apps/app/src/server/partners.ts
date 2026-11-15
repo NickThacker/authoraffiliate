@@ -1,4 +1,5 @@
 import {
+  auditLog,
   commission,
   link,
   message,
@@ -8,14 +9,17 @@ import {
   promoCode,
   prospect,
   user,
+  workspace,
 } from "@openpromoter/db";
-import { and, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, isNull, sql } from "drizzle-orm";
 import { hashIp } from "@/lib/crypto";
 import { createCode, createId, slugify } from "@/lib/id";
+import { planById } from "@/lib/plans";
 import { type Actor, audit } from "./audit";
 import { db } from "./db";
 import { DEMO_READ_ONLY, DEMO_SLUG, demoOn } from "./demo";
 import { sendNotice } from "./email";
+import { isHosted } from "./env";
 import { enqueue } from "./jobs";
 import { followOverrides } from "./ledger";
 import { limit } from "./ratelimit";
@@ -92,6 +96,61 @@ async function uniqueCode(programId: string, preferred: string) {
   return createCode(8);
 }
 
+/** New partners a Free workspace can add by invite or API in 24 hours. Paid plans have no limit. */
+export const FREE_INVITES_PER_DAY = 50;
+export const overInviteLimit = (plan: string, sentToday: number) =>
+  plan === "free" && sentToday >= FREE_INVITES_PER_DAY;
+
+/**
+ * Cloud only. Every partner or team invite is an email from our sender, so a throwaway account could use
+ * invites to spam. The founder confirms their own email before the first invite.
+ */
+export async function assertFounderVerified(founder: { id: string; email: string }) {
+  if (!isHosted()) return;
+  // the session cookie caches the user for 5 minutes: read the database so a fresh confirmation counts at once
+  const [u] = await db().select({ v: user.emailVerified }).from(user).where(eq(user.id, founder.id));
+  if (u?.v) return;
+  if ((await limit(`founder-verify:${founder.email}`, 3, 3_600_000)).ok) {
+    const { auth } = await import("./auth");
+    await auth.api
+      .sendVerificationEmail({ body: { email: founder.email, callbackURL: "/app" } })
+      .catch((e: Error) => console.error(`[partners] verification email: ${e.message}`));
+  }
+  throw new Error(
+    `Confirm your email before sending invites. We sent a link to ${founder.email}. Open it and invite again.`,
+  );
+}
+
+/** Founder-sent welcome emails: an invite, an API-created partner or approving an imported one. */
+const WELCOME = sql`${auditLog.data}->>'welcome' = 'true'`;
+
+/**
+ * Cloud only. A Free workspace sends at most FREE_INVITES_PER_DAY welcome emails a day to addresses the founder
+ * typed or imported. Partners who applied themselves and embedded-dashboard users don't count.
+ * Counted from the audit log, which marks each such email with { welcome: true }.
+ */
+async function assertInviteLimit(workspaceId: string, adding = 1) {
+  if (!isHosted() || adding <= 0) return;
+  const [ws] = await db()
+    .select({ plan: workspace.plan })
+    .from(workspace)
+    .where(eq(workspace.id, workspaceId));
+  const [row] = await db()
+    .select({ n: sql<number>`count(*)::int` })
+    .from(auditLog)
+    .where(
+      and(
+        eq(auditLog.workspaceId, workspaceId),
+        gte(auditLog.createdAt, new Date(Date.now() - 86_400_000)),
+        WELCOME,
+      ),
+    );
+  if (overInviteLimit(planById(ws?.plan ?? "free").id, (row?.n ?? 0) + adding - 1))
+    throw new Error(
+      `The Free plan can send ${FREE_INVITES_PER_DAY} partner invites a day. Try again tomorrow or upgrade for no daily limit.`,
+    );
+}
+
 /**
  * A signed-in account may take over a partner record someone else created (invite, import, API) only once
  * it has proven the email: Better Auth sign-up doesn't verify addresses, so anyone could register bob@… and
@@ -115,6 +174,8 @@ export async function applyToProgram(
   prog: Program,
   input: ApplicationInput,
   invited = false,
+  /** false for embedded-dashboard sign-ins: the app's own users, not addresses typed by the founder */
+  countsAsInvite = input.source === "invite" || input.source === "api",
 ): Promise<{ partner: Partner; autoApproved: boolean; reason: string }> {
   // the public demo program is a showcase: nobody joins it for real
   if (demoOn() && prog.slug === DEMO_SLUG) throw new Error(DEMO_READ_ONLY);
@@ -130,6 +191,7 @@ export async function applyToProgram(
     }
     return { partner: existing, autoApproved: existing.status === "approved", reason: "Already applied" };
   }
+  if (countsAsInvite) await assertInviteLimit(prog.workspaceId);
   // "invited" from the public apply form only counts when the recruiter really sent this address an invite
   if (invited && input.source === "recruiter") {
     const [pr] = await db()
@@ -218,7 +280,11 @@ export async function applyToProgram(
     { type: "partner", id: p!.id },
     "partner.apply",
     { type: "partner", id: p!.id },
-    { autoApproved: decision.approve, reason: decision.reason },
+    {
+      autoApproved: decision.approve,
+      reason: decision.reason,
+      ...(countsAsInvite && decision.approve ? { welcome: true } : {}),
+    },
   );
   await enqueue("events.emit", {
     workspaceId: prog.workspaceId,
@@ -235,7 +301,35 @@ export async function setPartnerStatus(
   ids: string[],
   status: Partner["status"],
   actor: Actor,
+  /** The signed-in founder approving: must have a confirmed email before welcome emails go to typed addresses */
+  founder?: { id: string; email: string },
 ) {
+  // approving someone who didn't apply (imported or invited) emails an address the founder supplied
+  const welcome =
+    status === "approved"
+      ? new Set(
+          (
+            await db()
+              .select({ id: partner.id })
+              .from(partner)
+              .where(
+                and(
+                  eq(partner.programId, programId),
+                  inArray(partner.id, ids),
+                  inArray(partner.source, ["invite", "api", "import"]),
+                ),
+              )
+          ).map((r) => r.id),
+        )
+      : new Set<string>();
+  if (welcome.size) {
+    if (founder) await assertFounderVerified(founder);
+    const [prog] = await db()
+      .select({ ws: program.workspaceId })
+      .from(program)
+      .where(eq(program.id, programId));
+    if (prog) await assertInviteLimit(prog.ws, welcome.size);
+  }
   // applicants who are turned down hear back once; partners moved between other states do not
   const applicants =
     status === "rejected"
@@ -279,7 +373,13 @@ export async function setPartnerStatus(
     );
   }
   for (const p of rows) {
-    await audit(p.workspaceId, actor, `partner.${status}`, { type: "partner", id: p.id });
+    await audit(
+      p.workspaceId,
+      actor,
+      `partner.${status}`,
+      { type: "partner", id: p.id },
+      welcome.has(p.id) ? { welcome: true } : undefined,
+    );
     if (applicants.has(p.id)) await enqueue("notify.partner_rejected", { partnerId: p.id });
     if (status === "approved") {
       await enqueue("notify.partner_approved", { partnerId: p.id });

@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { createId } from "@/lib/id";
-import { formatMoney, toMinor } from "@/lib/money";
+import { formatMoney, percentBp, toMinor } from "@/lib/money";
 import { HTTP_URL } from "@/lib/url";
 import { audit } from "@/server/audit";
 import { auth } from "@/server/auth";
@@ -19,7 +19,13 @@ import {
   releaseCommissions,
   reverseCommissions,
 } from "@/server/ledger";
-import { applyToProgram, createLink, createPromoCode, setPartnerStatus } from "@/server/partners";
+import {
+  applyToProgram,
+  assertFounderVerified,
+  createLink,
+  createPromoCode,
+  setPartnerStatus,
+} from "@/server/partners";
 import { approvePayouts, cancelPayout, createPayoutBatch, markPaid } from "@/server/payouts";
 import { stripeFor } from "@/server/stripe-service";
 
@@ -54,6 +60,7 @@ export async function invitePartnerAction(
       .object({ email: z.email(), name: z.string().min(1).max(120), groupId: z.string().nullish() })
       .parse(input);
     if (v.groupId) await assertGroup(programId, v.groupId);
+    await assertFounderVerified(ctx.user);
     const { partner: p, reason } = await applyToProgram(
       ctx.program,
       { email: v.email, name: v.name, source: "invite" },
@@ -92,6 +99,7 @@ export async function setPartnerStatusAction(
       ids.parse(partnerIds),
       z.enum(["approved", "rejected", "paused", "banned", "pending"]).parse(status),
       ctx.actor,
+      ctx.user,
     );
     revalidatePath(`/app/${programId}`, "layout");
     return rows.length;
@@ -119,7 +127,7 @@ export async function updatePartnerAction(
         paypalEmail: z.email().nullish().or(z.literal("")),
         rate: z
           .string()
-          .regex(/^(\d+(\.\d{1,2})?)?$/, "Use a number like 35 or 12.5")
+          .regex(/^(\d+(\.\d{1,3})?)?$/, "Use a number like 35 or 12.5")
           .nullish(),
       })
       .parse(input);
@@ -131,7 +139,7 @@ export async function updatePartnerAction(
     if (rate !== undefined)
       patch.commissionOverride = rate
         ? ctx.program.commissionType === "percent"
-          ? Math.round(Number(rate) * 100)
+          ? percentBp(rate)
           : toMinor(rate, ctx.program.currency)
         : null;
     await db()

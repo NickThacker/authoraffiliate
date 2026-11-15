@@ -23,7 +23,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Section, Stat } from "@/components/page";
 import { TrafficPanels } from "@/components/traffic";
-import { formatMoney, formatNumber } from "@/lib/money";
+import { formatMoney, formatNumber, toMajor } from "@/lib/money";
 import { programCtx } from "@/server/context";
 import { db } from "@/server/db";
 import { env } from "@/server/env";
@@ -283,7 +283,7 @@ export default async function PartnerPage({
                 ? ""
                 : prog.commissionType === "percent"
                   ? String(p.commissionOverride / 100)
-                  : (p.commissionOverride / 100).toFixed(2)
+                  : toMajor(p.commissionOverride, prog.currency)
             }
             unit={prog.commissionType === "percent" ? "%" : prog.currency.toUpperCase()}
           />

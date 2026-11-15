@@ -192,7 +192,7 @@ export async function findCreatorProspects(prog: Program, niche: string, limit =
   return added;
 }
 
-/** Personalise drafted invites with AI (keeps the template when AI is off). */
+/** Personalize drafted invites with AI (keeps the template when AI is off). */
 export async function personalise(prog: Program, p: Prospect) {
   const out = await aiJson(z.object({ subject: z.string(), body: z.string() }), {
     system:

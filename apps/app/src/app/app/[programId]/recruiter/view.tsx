@@ -154,7 +154,7 @@ export function RecruiterView({
           <div className="flex items-center gap-2">
             <span className="text-[13px] text-muted">{sel.size} selected</span>
             <Button loading={pending} onClick={() => run(() => personaliseAction(programId, [...sel]))}>
-              <Sparkles /> Personalise
+              <Sparkles /> Personalize
             </Button>
             <Button
               loading={pending}

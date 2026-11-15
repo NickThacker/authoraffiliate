@@ -66,3 +66,22 @@
   background-size: 88px 88px;
   mask-image: linear-gradient(to bottom, #000 35%, transparent 85%);
 }
+
+/*
+ * Toasts: the icon sits on the first line of text, so a message that wraps reads like a paragraph with a
+ * bullet. Sonner centers it on the whole block. 2px centers a 16px icon on the 19.5px first line.
+ * Beacon's toast (mascot-toast.tsx) is taller than one line and stays centered.
+ * The `html` prefix outranks the styles Sonner injects at runtime.
+ */
+html [data-sonner-toast][data-styled="true"] {
+  align-items: flex-start;
+}
+html [data-sonner-toast][data-styled="true"] [data-icon] {
+  margin-top: 2px;
+}
+html [data-sonner-toast][data-styled="true"]:has(.op-mascot-icon) {
+  align-items: center;
+}
+html [data-sonner-toast][data-styled="true"] [data-icon].op-mascot-icon {
+  margin-top: 0;
+}

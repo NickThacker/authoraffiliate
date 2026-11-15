@@ -280,7 +280,11 @@ describe("exchange rates", () => {
           rank: 2,
           promoteAtRevenue: 100_000,
         });
-      await ingest(s.ws.id, "stripe", evt([pay(s.customerId, { amount: yen, currency: "jpy" })]));
+      // live mode: test-mode sales never promote a partner
+      await ingest(s.ws.id, "stripe", {
+        ...evt([pay(s.customerId, { amount: yen, currency: "jpy" })]),
+        livemode: true,
+      });
       await evaluateTiers(s.program.id, s.partner.id);
       const [pt] = await db().select().from(partner).where(eq(partner.id, s.partner.id));
       const [g] = await db().select().from(partnerGroup).where(eq(partnerGroup.id, pt!.groupId!));

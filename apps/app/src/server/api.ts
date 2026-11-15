@@ -351,7 +351,8 @@ export const ROUTES: Route[] = [
     body: z.object({ email: z.email(), name: z.string().min(1).max(120) }),
     handler: async (ctx, { params, body }) => {
       const p = await programFor(ctx, params.programId!);
-      const r = await applyToProgram(p, { email: body.email, name: body.name, source: "api" }, true);
+      // the app's own signed-in users opening their referral dashboard: not invites, no daily limit
+      const r = await applyToProgram(p, { email: body.email, name: body.name, source: "api" }, true, false);
       return { token: signEmbedToken(r.partner.id), partnerId: r.partner.id, expiresIn: 3600 };
     },
   },

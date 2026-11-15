@@ -223,7 +223,11 @@ export async function recordLead(input: LeadInput) {
       .select()
       .from(click)
       .where(and(eq(click.id, input.clickId), eq(click.programId, prog.id)));
-    if (c) ({ partnerId, id: clickId, visitorId } = c);
+    if (c) {
+      // from the browser a click id is public: it only counts inside the cookie window
+      if (input.browser && !pickClick([c], prog.attributionModel, new Date(), prog.cookieDays)) return null;
+      ({ partnerId, id: clickId, visitorId } = c);
+    }
   }
   if (!partnerId && visitorId) {
     const clicks = await db()
@@ -246,6 +250,17 @@ export async function recordLead(input: LeadInput) {
     partnerId = p?.id ?? null;
   }
   if (!partnerId) return null;
+  // from the browser one click vouches for one signup, however it was found (click id or visitor id).
+  // Without this a partner could make one click and post any number of other people's emails under it.
+  if (input.browser) {
+    if (!clickId) return null;
+    const [used] = await db()
+      .select({ id: referral.id })
+      .from(referral)
+      .where(and(eq(referral.programId, prog.id), eq(referral.clickId, clickId)))
+      .limit(1);
+    if (used) return null;
+  }
 
   const [p] = await db().select().from(partner).where(eq(partner.id, partnerId));
   // like clicks: only an approved partner can be credited

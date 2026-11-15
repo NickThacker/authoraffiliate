@@ -82,7 +82,8 @@ export default async function BillingPage({
           <Progress value={(s.usage / s.plan.revenueLimit) * 100} label="Usage" />
           {s.over ? (
             <p className="mt-2 text-xs text-warning">
-              Tracking and payouts keep working. Upgrade to stay within your plan.
+              Tracking and payouts keep working. After two full months over, the dashboard asks you to
+              upgrade.
             </p>
           ) : null}
           {ai ? (

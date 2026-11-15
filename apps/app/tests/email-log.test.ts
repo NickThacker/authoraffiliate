@@ -76,4 +76,35 @@ describe("email log", () => {
     await applySesNotice(JSON.stringify({ notificationType: "Delivery", mail: { messageId: "ses-1" } }));
     expect((await status()).status).toBe("bounced");
   });
+
+  it("never emails an address that hard-bounced or complained, but retries a soft bounce", async () => {
+    await db()
+      .insert(emailLog)
+      .values([
+        {
+          id: "eml_hb",
+          to: "hard@bounce.test",
+          subject: "a",
+          status: "bounced",
+          detail: "Permanent General: 550",
+        },
+        { id: "eml_cp", to: "spam@complain.test", subject: "a", status: "complained" },
+        {
+          id: "eml_sb",
+          to: "soft@bounce.test",
+          subject: "a",
+          status: "bounced",
+          detail: "Transient MailboxFull: full",
+        },
+      ]);
+    const send = (to: string) => sendMail({ to, subject: "Again", html: "<p>x</p>", text: "x" });
+    const last = async (to: string) =>
+      (await db().select().from(emailLog).where(eq(emailLog.to, to))).find((r) => r.subject === "Again");
+    await send("hard@bounce.test");
+    await send("spam@complain.test");
+    await send("soft@bounce.test");
+    expect(await last("hard@bounce.test")).toMatchObject({ status: "not_sent" });
+    expect(await last("spam@complain.test")).toMatchObject({ status: "not_sent" });
+    expect((await last("soft@bounce.test"))?.detail).not.toBe("Address bounced or complained before");
+  });
 });

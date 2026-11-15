@@ -9,7 +9,7 @@ import {
   program,
   referral,
 } from "@openpromoter/db";
-import { and, desc, eq, gte, inArray, lt, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lt, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 import { createId } from "@/lib/id";
 import { toMinor } from "@/lib/money";
@@ -347,7 +347,15 @@ export async function evaluateBounties(programId: string, partnerId: string, tri
       const [row] = await db()
         .select({ rev: sql<number>`coalesce(sum(${baseSale}),0)::int` })
         .from(commission)
-        .where(and(eq(commission.partnerId, partnerId), gte(commission.createdAt, c.startsAt)));
+        // refunded or reversed sales and test sales never count toward a reward
+        .where(
+          and(
+            eq(commission.partnerId, partnerId),
+            gte(commission.createdAt, c.startsAt),
+            ne(commission.status, "reversed"),
+            eq(commission.test, false),
+          ),
+        );
       if ((row?.rev ?? 0) >= r.milestone) {
         await grant(
           prog,
@@ -449,6 +457,8 @@ export async function contestStandings(c: typeof campaign.$inferSelect, limit = 
         gte(commission.createdAt, c.startsAt),
         lt(commission.createdAt, end),
         inArray(commission.kind, ["sale", "adjustment"]),
+        ne(commission.status, "reversed"),
+        eq(commission.test, false),
       ),
     )
     .groupBy(commission.partnerId, partner.name)
@@ -488,7 +498,9 @@ export async function evaluateTiers(programId: string, partnerId: string) {
   const [row] = await db()
     .select({ rev: sql<number>`coalesce(sum(${baseSale}),0)::int` })
     .from(commission)
-    .where(eq(commission.partnerId, partnerId));
+    .where(
+      and(eq(commission.partnerId, partnerId), ne(commission.status, "reversed"), eq(commission.test, false)),
+    );
   const rev = row?.rev ?? 0;
   const current = groups.find((g) => g.id === p.groupId);
   const target = groups

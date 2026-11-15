@@ -58,6 +58,13 @@ export const formatPercent = (ratio: number, digits = 1) =>
   `${(Number.isFinite(ratio) ? ratio * 100 : 0).toFixed(digits)}%`;
 
 /** Parse "49.99" → 4999 (minor units). */
+/** A percent typed by a founder ("12.5") to basis points (1250). Over 100% would pay more than the sale. */
+export function percentBp(value: string | number): number {
+  const n = Number(value);
+  if (!(n >= 0 && n <= 100)) throw new Error("A percent rate can be at most 100.");
+  return Math.round(n * 100);
+}
+
 export function toMinor(major: string | number, currency = "usd"): number {
   return Math.round(Number(major) * minorFactor(currency));
 }
