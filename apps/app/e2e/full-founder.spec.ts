@@ -858,8 +858,12 @@ test("recruiter: add someone, draft invite, send, dismiss, AI-only actions", asy
   await expect(inv.getByLabel("Subject")).not.toHaveValue("");
   await expect(inv.getByLabel("Message")).toHaveValue(/QA Co/);
   await inv.getByLabel("Subject").fill(`Join us ${S.id}`);
-  await inv.getByRole("button", { name: "Send invite" }).click();
-  await expectToast(page, /Invite sent|invites sent|1/);
+  // the founder sends it from their own email: Copy, paste it anywhere, then I sent it marks it invited
+  // (Open in Gmail and Open in mail app leave the page, so the test takes the Copy path)
+  await inv.getByRole("button", { name: "Copy" }).click();
+  await inv.getByRole("button", { name: "I sent it" }).click();
+  await expectToast(page, "Marked as invited");
+  await expect(inv).toBeHidden();
   await page.reload();
   await page.getByRole("tab", { name: /Invited/ }).click();
   await expect(page.locator("li", { hasText: "Cara Creator" })).toContainText("Invited");
