@@ -114,6 +114,8 @@ export const workspace = pgTable("workspace", {
   billingStatus: text("billing_status"),
   /** When a scheduled cancellation ends the plan. */
   billingCancelAt: ts("billing_cancel_at"),
+  /** How the paid plan is billed, from the Stripe price: month, or year at 2 months free. */
+  billingInterval: text("billing_interval").$type<"month" | "year">(),
   /** Where the business is billed, for India GST: abroad (no GST), in_home (CGST+SGST) or in_other (IGST). */
   billingRegion: text("billing_region").$type<"abroad" | "in_home" | "in_other">(),
   trialEndsAt: ts("trial_ends_at"),

@@ -1,14 +1,18 @@
-import { Badge, Card, CardBody, CardHeader, Progress } from "@openpromoter/ui";
+import { Badge, Card, CardBody, CardHeader, cn, Progress } from "@openpromoter/ui";
 import { Check } from "@openpromoter/ui/icons";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { formatMoney } from "@/lib/money";
-import { PLANS } from "@/lib/plans";
+import { type BillingInterval, PLANS, yearlyPrice } from "@/lib/plans";
 import { aiBudget } from "@/server/ai/provider";
 import { planStatus } from "@/server/billing-plans";
 import { programCtx } from "@/server/context";
 import { outsideIndia } from "@/server/gst";
 import { PlanButton } from "./plan-button";
 import { BillingRegion } from "./region";
+
+/** Whole-dollar plan prices without cents: $29, $1,990. */
+const dollars = (cents: number) => `$${(cents / 100).toLocaleString("en-US")}`;
 
 const day = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
@@ -41,14 +45,18 @@ export default async function BillingPage({
   searchParams,
 }: {
   params: Promise<{ programId: string }>;
-  searchParams: Promise<{ billing?: string }>;
+  searchParams: Promise<{ billing?: string; period?: string }>;
 }) {
   const { programId } = await params;
-  const paid = (await searchParams).billing === "success";
+  const sp = await searchParams;
+  const paid = sp.billing === "success";
   const { program: p, role } = await programCtx(programId);
   const s = await planStatus(p.workspaceId);
   const ai = s.hosted ? await aiBudget(p.workspaceId) : null;
   const line = statusLine(s);
+  // the plans show the period picked here, or the one the workspace already pays
+  const period: BillingInterval =
+    sp.period === "year" || sp.period === "month" ? sp.period : s.interval === "year" ? "year" : "month";
   // GST only concerns Indian businesses: visitors Cloudflare places abroad skip the question
   const ask = s.hosted && s.gst && !outsideIndia((await headers()).get("cf-ipcountry"));
   return (
@@ -61,7 +69,11 @@ export default async function BillingPage({
       <Card>
         <CardHeader
           title={`${s.plan.name} plan`}
-          description="Flat monthly price. OpenPromoter never takes a cut of your payouts."
+          description={
+            s.plan.price && s.interval === "year"
+              ? "Billed yearly with 2 months free. OpenPromoter never takes a cut of your payouts."
+              : "Flat monthly price. OpenPromoter never takes a cut of your payouts."
+          }
           action={s.over ? <Badge tone="warning">Over limit</Badge> : null}
         />
         <CardBody>
@@ -105,14 +117,49 @@ export default async function BillingPage({
         </CardBody>
       </Card>
       {ask && role === "owner" ? <BillingRegion programId={programId} region={s.region} /> : null}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-[13px] text-muted">Pay yearly and get 2 months free.</p>
+        <div
+          role="group"
+          aria-label="Billing period"
+          className="flex rounded-lg bg-surface-2 p-0.5 ring-1 ring-border ring-inset"
+        >
+          {(["month", "year"] as const).map((v) => (
+            <Link
+              key={v}
+              href={`?period=${v}`}
+              scroll={false}
+              replace
+              aria-current={period === v ? "true" : undefined}
+              className={cn(
+                "flex h-7 items-center rounded-md px-3 text-xs font-medium transition-colors",
+                period === v ? "bg-surface text-fg dark:bg-surface-3" : "text-subtle hover:text-fg",
+              )}
+            >
+              {v === "month" ? "Monthly" : "Yearly"}
+            </Link>
+          ))}
+        </div>
+      </div>
       <div className="grid gap-3 md:grid-cols-4">
         {PLANS.map((pl) => (
           <Card key={pl.id} className={`flex flex-col p-5 ${pl.id === s.plan.id ? "border-accent" : ""}`}>
             <div className="text-[13px] font-medium text-fg">{pl.name}</div>
             <div className="num mt-2 text-[28px] font-medium tracking-tight text-fg">
-              {formatMoney(pl.price, "usd", { compact: true })}
-              <span className="text-[13px] font-normal tracking-normal text-subtle"> /mo</span>
+              {dollars(period === "year" ? yearlyPrice(pl.price) : pl.price)}
+              <span className="text-[13px] font-normal tracking-normal text-subtle">
+                {period === "year" ? " /yr" : " /mo"}
+              </span>
             </div>
+            {period === "year" ? (
+              // side by side, Free keeps the line's height so every card's list starts at the same place
+              <p
+                className={cn("mt-1 h-4 text-xs text-success", !pl.price && "hidden md:block")}
+                aria-hidden={!pl.price}
+              >
+                {pl.price ? "2 months free" : ""}
+              </p>
+            ) : null}
             <ul className="mt-3 flex flex-1 flex-col gap-1.5 text-[13px] text-muted">
               {pl.features.map((f) => (
                 <li key={f} className="flex gap-1.5">
@@ -127,6 +174,7 @@ export default async function BillingPage({
                 plan={pl.id}
                 current={pl.id === s.plan.id}
                 needsRegion={ask && !s.region}
+                interval={period}
               />
             ) : null}
           </Card>

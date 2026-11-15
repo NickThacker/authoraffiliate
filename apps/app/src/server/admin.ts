@@ -30,7 +30,7 @@ import {
 } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { DEMO } from "@/lib/demo-accounts";
-import { planById } from "@/lib/plans";
+import { monthlyValue, planById } from "@/lib/plans";
 import { currentUser } from "./context";
 import { db } from "./db";
 import { demoOn } from "./demo";
@@ -195,7 +195,8 @@ export async function adminWorkspaces(only?: string) {
         lastActive,
         plan,
         paying,
-        mrr: paying ? plan.price : 0,
+        mrr: paying ? monthlyValue(plan.price, w.billingInterval) : 0,
+        interval: w.billingInterval,
         status: w.billingStatus,
         cancelAt: w.billingCancelAt,
         region: w.billingRegion,

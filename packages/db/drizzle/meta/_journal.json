@@ -169,6 +169,13 @@
       "when": 1794569552405,
       "tag": "0023_partner_avatar",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1794776263205,
+      "tag": "0024_billing_interval",
+      "breakpoints": true
     }
   ]
 }

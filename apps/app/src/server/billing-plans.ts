@@ -2,7 +2,7 @@ import { commission, member, program, user, workspace } from "@openpromoter/db";
 import { and, eq, gte, lt, ne, sql } from "drizzle-orm";
 import type Stripe from "stripe";
 import { PRODUCT } from "@/lib/config";
-import { lookupKey, PLANS, type PlanId, planById } from "@/lib/plans";
+import { type BillingInterval, lookupKey, PLANS, type PlanId, planById } from "@/lib/plans";
 import { audit, SYSTEM } from "./audit";
 import { stripeClient } from "./billing/stripe";
 import { db } from "./db";
@@ -75,6 +75,7 @@ export async function planStatus(workspaceId: string) {
     gst: gstOn(),
     trialEndsAt: ws?.billingStatus === "trialing" ? ws.trialEndsAt : null,
     cancelAt: ws?.billingCancelAt ?? null,
+    interval: ws?.billingInterval ?? null,
   };
 }
 
@@ -85,6 +86,7 @@ export async function checkoutUrl(
   returnPath = "/app",
   /** the visitor is outside India (Cloudflare): no location question, billed abroad */
   outside = false,
+  interval: BillingInterval = "month",
 ) {
   if (!env.PLATFORM_STRIPE_SECRET_KEY)
     throw new Error("Billing isn't configured (PLATFORM_STRIPE_SECRET_KEY)");
@@ -93,9 +95,10 @@ export async function checkoutUrl(
   if (current?.billingSubscriptionId && current.plan !== "free") return portalUrl(workspaceId, returnPath);
   if (planId === "free") throw new Error("You're already on the Free plan");
   const stripe = stripeClient(env.PLATFORM_STRIPE_SECRET_KEY);
-  const prices = await stripe.prices.list({ lookup_keys: [lookupKey(planId)], limit: 1 });
+  const key = lookupKey(planId, interval);
+  const prices = await stripe.prices.list({ lookup_keys: [key], limit: 1 });
   const price = prices.data[0];
-  if (!price) throw new Error(`No Stripe price with lookup key ${lookupKey(planId)}`);
+  if (!price) throw new Error(`No Stripe price with lookup key ${key}`);
   const [ws] = await db().select().from(workspace).where(eq(workspace.id, workspaceId));
   // India GST is charged from the first payment, so where the business is billed is asked before Checkout
   let region = ws?.billingRegion ?? null;
@@ -196,6 +199,7 @@ export async function applyPlanSubscription(sub: Stripe.Subscription) {
   const plan =
     PLANS.find((p) => key.startsWith(`openpromoter_${p.id}_`))?.id ?? sub.metadata?.plan ?? "starter";
   const periodEnd = sub.items?.data?.[0]?.current_period_end;
+  const interval = sub.items?.data?.[0]?.price?.recurring?.interval === "year" ? "year" : "month";
   await db()
     .update(workspace)
     .set({
@@ -203,6 +207,7 @@ export async function applyPlanSubscription(sub: Stripe.Subscription) {
       billingSubscriptionId: sub.id,
       billingCustomerId: typeof sub.customer === "string" ? sub.customer : sub.customer.id,
       billingStatus: sub.status,
+      billingInterval: active ? interval : null,
       trialEndsAt: at(sub.trial_end),
       billingCancelAt: active ? at(sub.cancel_at ?? (sub.cancel_at_period_end ? periodEnd : null)) : null,
     })

@@ -45,7 +45,7 @@ export default async function AdminRevenue() {
   const upgrade = rows.filter((w) => w.usageShare >= 0.8);
   const byPlan = PLANS.filter((p) => p.price > 0).map((p) => {
     const on = paying.filter((w) => w.plan.id === p.id);
-    return { plan: p.name, count: on.length, mrr: on.length * p.price };
+    return { plan: p.name, count: on.length, mrr: on.reduce((a, w) => a + w.mrr, 0) };
   });
   const regions = Object.entries(
     paying.reduce<Record<string, number>>((a, w) => {

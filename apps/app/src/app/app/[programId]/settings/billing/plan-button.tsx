@@ -10,11 +10,13 @@ export function PlanButton({
   plan,
   current,
   needsRegion = false,
+  interval = "month",
 }: {
   programId: string;
   plan: string;
   current: boolean;
   needsRegion?: boolean;
+  interval?: "month" | "year";
 }) {
   const [pending, start] = useTransition();
   return (
@@ -26,7 +28,9 @@ export function PlanButton({
       title={needsRegion && !current ? "Choose where your business is billed first" : undefined}
       onClick={() =>
         start(async () => {
-          const r = current ? await billingPortalAction(programId) : await choosePlanAction(programId, plan);
+          const r = current
+            ? await billingPortalAction(programId)
+            : await choosePlanAction(programId, plan, interval);
           if (!r.ok) return void toast.error(r.error);
           window.location.href = r.data!;
         })

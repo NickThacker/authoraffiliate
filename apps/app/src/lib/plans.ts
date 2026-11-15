@@ -51,5 +51,12 @@ export const PLANS = [
 
 export type PlanId = (typeof PLANS)[number]["id"];
 export const planById = (id: string) => PLANS.find((p) => p.id === id) ?? PLANS[0];
+export type BillingInterval = "month" | "year";
+/** Yearly billing is 2 months free: ten monthly prices, in cents. */
+export const yearlyPrice = (monthlyCents: number) => monthlyCents * 10;
+/** What a plan earns each month, for MRR: a yearly plan counts as its yearly price over 12 months. */
+export const monthlyValue = (monthlyCents: number, interval: BillingInterval | null | undefined) =>
+  interval === "year" ? Math.round(yearlyPrice(monthlyCents) / 12) : monthlyCents;
 /** Stripe Price lookup keys created by the owner in OpenPromoter's own Stripe account. */
-export const lookupKey = (id: PlanId) => `openpromoter_${id}_monthly`;
+export const lookupKey = (id: PlanId, interval: BillingInterval = "month") =>
+  `openpromoter_${id}_${interval === "year" ? "yearly" : "monthly"}`;
