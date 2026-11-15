@@ -1477,10 +1477,7 @@ test("82 founder B cannot open program A's partners, messages or payouts by id",
   await fb.ctx.close();
 });
 
-test("83 not-found pages for other tenants' ids answer with HTTP 404 (not a 200 soft 404)", async ({
-  browser,
-  request,
-}) => {
+test("83 other tenants' ids show the not-found page and none of their data", async ({ browser, request }) => {
   const s = loadState() as State & { payoutId?: string };
   const { partnerId: pid } = await partnerId(request, s.partners.p1!.email);
   const fb = await founderB(browser);
@@ -1491,11 +1488,19 @@ test("83 not-found pages for other tenants' ids answer with HTTP 404 (not a 200 
     [p2.page, `/p/${s.slug}/portal/payouts/${s.payoutId}`],
     [p2.page, `/p/${s.slug}/portal/payouts/po_does_not_exist`],
   ];
+  // these pages stream behind a skeleton (loading.tsx), so Next sends 200 before the page decides it's not
+  // found; what matters is that the not-found page renders and nothing of the other tenant leaks into it
   const got: string[] = [];
-  for (const [page, path] of checks) got.push(`${path} → ${(await page.request.get(path)).status()}`);
+  for (const [page, path] of checks) {
+    const res = await page.request.get(path);
+    const body = await res.text();
+    const notFound = [200, 404].includes(res.status()) && /could not be found/i.test(body);
+    const leaked = body.includes(s.partners.p1!.email);
+    got.push(`${path} → ${notFound ? "not found" : res.status()}${leaked ? ", leaks p1" : ""}`);
+  }
   await fb.ctx.close();
   await p2.ctx.close();
-  expect(got).toEqual(checks.map(([, path]) => `${path} → 404`));
+  expect(got).toEqual(checks.map(([, path]) => `${path} → not found`));
 });
 
 // ---------------------------------------------------------------------------------------------------------

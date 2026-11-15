@@ -555,12 +555,13 @@ test.describe("settings", () => {
     const { ctx, page } = await asFounder(browser, "branding");
     await page.goto(`${programUrl}/settings/branding`);
     await page.locator("#br-color").fill("#12a37f");
-    await page.getByLabel("Logo URL").fill("http://localhost:3000/favicon.ico");
+    // a PNG: .ico and SVG logos are refused because Gmail and Outlook can't show them in emails
+    await page.getByLabel("Logo URL").fill("http://localhost:3000/checkout-icon.png");
     await page.getByLabel("Headline").fill(`Earn with us ${id}`);
     await page.getByLabel("Description").fill("A short pitch for partners.");
     const preview = page.getByText("Join the program", { exact: true });
     await expect(preview).toHaveCSS("background-color", "rgb(18, 163, 127)");
-    await expect(page.locator('img[src="http://localhost:3000/favicon.ico"]')).toHaveCount(1);
+    await expect(page.locator('img[src="http://localhost:3000/checkout-icon.png"]')).toHaveCount(1);
     await page.getByRole("button", { name: "Save", exact: true }).first().click();
     await toast(page, "Branding saved");
     await page.reload();
@@ -583,7 +584,7 @@ test.describe("settings", () => {
     const t = await toast(page, /invalid|Branding saved/i);
     if (/Branding saved/.test((await t.textContent()) ?? "")) {
       await page.reload();
-      await page.getByLabel("Logo URL").fill("http://localhost:3000/favicon.ico");
+      await page.getByLabel("Logo URL").fill("http://localhost:3000/checkout-icon.png");
       await page.getByRole("button", { name: "Save", exact: true }).first().click();
       await toast(page, "Branding saved");
     }
