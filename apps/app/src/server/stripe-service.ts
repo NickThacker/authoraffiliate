@@ -79,7 +79,7 @@ async function registerEndpoint(
     const ep = await stripe.webhookEndpoints.create({
       url: webhookUrl("stripe", workspaceId),
       enabled_events: STRIPE_EVENTS,
-      description: "OpenPromoter attribution",
+      description: "Author Affiliate attribution",
     });
     if (old?.id && old.id !== ep.id) await stripe.webhookEndpoints.del(old.id).catch(() => {});
     return { endpointId: ep.id, secret: ep.secret ?? null, error: null };

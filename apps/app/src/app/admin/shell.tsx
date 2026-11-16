@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark } from "@/components/logo";
+import { PRODUCT } from "@/lib/config";
 
 type Item = [href: string, label: string, icon: Icon, badge?: number];
 
@@ -74,7 +75,7 @@ export function AdminShell({
           <LogoMark />
           <div className="min-w-0">
             <div className="truncate text-[14px] leading-5 font-medium tracking-[-0.01em] text-fg">
-              OpenPromoter
+              {PRODUCT.name}
             </div>
             <div className="truncate text-xs leading-4 text-subtle">Cloud admin</div>
           </div>

@@ -1,23 +1,15 @@
 import { PRODUCT } from "@/lib/config";
 
 /**
- * Mark: Beacon's head. The body takes the text colour and the antenna dot the accent, so `color`
- * lets the partner portal use the founder's brand. Eyes take the page colour unless --eye is set.
+ * Mark: an open book with a bookmark ribbon. The pages take the text colour and the ribbon the accent,
+ * so `color` lets the partner portal use the founder's brand. Same shapes as public/favicon.svg.
  */
 export function LogoMark({ size = 22, color = "var(--accent)" }: { size?: number; color?: string }) {
   return (
-    <svg width={size} height={size} viewBox="6 0 52 52" aria-hidden>
-      <path
-        d="M32 16C32 12 33 9.5 35 7.6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3.2"
-        strokeLinecap="round"
-      />
-      <circle cx="36" cy="6.6" r="5.4" fill={color} />
-      <rect x="12" y="15" width="40" height="37" rx="17" fill="currentColor" />
-      <rect x="23" y="27.5" width="6" height="10" rx="3" fill="var(--eye, var(--bg))" />
-      <rect x="35" y="27.5" width="6" height="10" rx="3" fill="var(--eye, var(--bg))" />
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
+      <path d="M30 30h8v16l-4-3.5-4 3.5z" fill={color} />
+      <path d="M22.6 12.2C17.6 8.4 10.8 7.6 3.5 9.2v28.4c7.3-1.4 14.1-.6 19.1 3.2z" fill="currentColor" />
+      <path d="M25.4 12.2c5-3.8 11.8-4.6 19.1-3V37.6c-7.3-1.4-14.1-.6-19.1 3.2z" fill="currentColor" />
     </svg>
   );
 }
@@ -27,10 +19,7 @@ export function Logo({ className }: { className?: string }) {
     <span
       className={`inline-flex items-center gap-2 text-[15px] font-medium tracking-[-0.02em] text-fg ${className ?? ""}`}
     >
-      {/* Lifted so the head, not the antenna box, is centred on the text. */}
-      <span className="relative -top-[3px] inline-flex">
-        <LogoMark />
-      </span>
+      <LogoMark />
       {PRODUCT.name}
     </span>
   );

@@ -12,7 +12,7 @@ import {
 export function stripeClient(secret: string) {
   return new Stripe(secret, {
     maxNetworkRetries: 2,
-    appInfo: { name: "OpenPromoter", url: "https://openpromoter.com" },
+    appInfo: { name: "Author Affiliate", url: "https://authoraffiliate.com" },
   });
 }
 

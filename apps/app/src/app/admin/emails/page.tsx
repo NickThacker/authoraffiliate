@@ -63,7 +63,7 @@ export default async function AdminEmails({
     <>
       <PageHeader
         title="Emails"
-        description="Every email OpenPromoter sent in the last 30 days and what the mail provider reported. A copy of each email is kept with its links removed."
+        description="Every email Author Affiliate sent in the last 30 days and what the mail provider reported. A copy of each email is kept with its links removed."
         actions={<TestEmailForm />}
       />
       <EmailsTable

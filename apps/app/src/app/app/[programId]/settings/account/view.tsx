@@ -263,7 +263,7 @@ export function AccountView({
       </SettingsCard>
       <SettingsCard
         title="Your data"
-        description="Export everything OpenPromoter stores about you or delete your account (GDPR)."
+        description="Export everything Author Affiliate stores about you or delete your account (GDPR)."
       >
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="secondary">

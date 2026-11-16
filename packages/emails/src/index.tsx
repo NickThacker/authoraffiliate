@@ -23,7 +23,7 @@ const c = {
   faint: "#6C6D72", // --text-subtle: 4.8:1 on the canvas, 5.3:1 on paper
   hairline: "#E8E8E4",
   dot: "#D9D9D4",
-  accent: "#2442F5",
+  accent: "#0F766E",
 };
 const sans = "Inter, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 const mono = "ui-monospace, SFMono-Regular, Menlo, monospace";
@@ -131,11 +131,15 @@ function Shell({ title, preview, children }: { title: string; preview: string; c
   );
 }
 
-/** OpenPromoter's own mark: a PNG (Gmail and Outlook don't show SVG) on its own white tile, so it reads in dark mode. */
-export const OPENPROMOTER_LOGO = "https://openpromoter.com/email/openpromoter-logo.png";
+/** The platform's own name, site and mark: a PNG (Gmail and Outlook don't show SVG) on its own white tile, so it reads in dark mode. */
+export const PLATFORM_NAME = "Author Affiliate";
+export const PLATFORM_URL = "https://authoraffiliate.com";
+export const PLATFORM_LOGO = `${PLATFORM_URL}/email/authoraffiliate-logo.png`;
+/** Kept for upstream compatibility. */
+export const OPENPROMOTER_LOGO = PLATFORM_LOGO;
 
 function Masthead({ name, logoUrl, color }: { name: string; logoUrl?: string | null; color: string }) {
-  const logo = logoUrl || (name === "OpenPromoter" ? OPENPROMOTER_LOGO : null);
+  const logo = logoUrl || (name === PLATFORM_NAME ? PLATFORM_LOGO : null);
   return (
     <Section className="op-head" style={{ padding: "0 8px 20px" }}>
       <table role="presentation" cellPadding={0} cellSpacing={0} border={0}>
@@ -389,8 +393,8 @@ function Footer({ reason, links }: { reason: string; links: ReactNode }) {
 const footLink: CSSProperties = { color: c.faint, textDecoration: "underline" };
 
 const poweredBy = (
-  <Link href="https://openpromoter.com" className="op-faint" style={footLink}>
-    Powered by OpenPromoter
+  <Link href={PLATFORM_URL} className="op-faint" style={footLink}>
+    Powered by {PLATFORM_NAME}
   </Link>
 );
 
@@ -494,9 +498,9 @@ export function Notice({
                 {"  ·  "}
               </>
             ) : null}
-            {brandName === "OpenPromoter" ? (
-              <Link href="https://openpromoter.com" className="op-faint" style={footLink}>
-                openpromoter.com
+            {brandName === PLATFORM_NAME ? (
+              <Link href={PLATFORM_URL} className="op-faint" style={footLink}>
+                authoraffiliate.com
               </Link>
             ) : (
               poweredBy

@@ -1,7 +1,7 @@
 import type Stripe from "stripe";
 import { describe, expect, it, vi } from "vitest";
 
-// Owners hear from OpenPromoter itself when a renewal fails or a paid plan ends, once per change.
+// Owners hear from Author Affiliate itself when a renewal fails or a paid plan ends, once per change.
 const sent: { to: string; subject: string; body: string }[] = [];
 vi.mock("@/server/email", () => ({
   sendNotice: async (to: string, subject: string, p: { paragraphs: string[]; cta?: { href: string } }) => {
@@ -49,6 +49,6 @@ describe("billing mail", () => {
     sent.length = 0;
     await applyPlanSubscription(sub(f.ws.id, "active"));
     await applyPlanSubscription(sub(f.ws.id, "canceled"));
-    expect(sent.map((m) => m.subject)).toEqual(["Your OpenPromoter Starter plan has ended"]);
+    expect(sent.map((m) => m.subject)).toEqual(["Your Author Affiliate Starter plan has ended"]);
   });
 });

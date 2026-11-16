@@ -7,12 +7,12 @@ const SCENE: Record<SceneKind, { pose: BeaconPose; line: string; facts: string[]
   signin: {
     pose: "hello",
     line: "Every commission traced to the invoice that created it.",
-    facts: ["0% of payouts", "Open source", "Self-host free"],
+    facts: ["0% of payouts", "Traced to Stripe", "Open source"],
   },
   signup: {
     pose: "celebrates",
     line: "From Stripe key to first partner in about five minutes.",
-    facts: ["Free up to $1k a month", "No card", "0% of payouts"],
+    facts: ["0% of payouts", "No card", "Open source"],
   },
 };
 
@@ -34,7 +34,7 @@ export function AuthCard({
   children: React.ReactNode;
   footer?: React.ReactNode;
   scene?: SceneKind;
-  /** Inside a program's own frame (PartnerAuthShell): the form only, without OpenPromoter's page and panel. */
+  /** Inside a program's own frame (PartnerAuthShell): the form only, without Author Affiliate's page and panel. */
   bare?: boolean;
 }) {
   const s = SCENE[scene];
@@ -66,11 +66,16 @@ export function AuthCard({
           ) : null}
         </div>
         <div className="flex items-center gap-4 text-xs text-subtle">
-          <span>Open source under AGPL-3.0</span>
+          <span>
+            Open source under AGPL-3.0 · based on{" "}
+            <a href={PRODUCT.upstream.url} className="hover:text-fg">
+              {PRODUCT.upstream.name}
+            </a>
+          </span>
           <a href={PRODUCT.github} className="-my-2 ml-auto py-2 hover:text-fg">
             GitHub
           </a>
-          <a href="https://openpromoter.com/docs/" className="-my-2 py-2 hover:text-fg">
+          <a href={`${PRODUCT.docs}/`} className="-my-2 py-2 hover:text-fg">
             Docs
           </a>
         </div>
@@ -91,14 +96,14 @@ export function AuthCard({
             />
           ))}
           <span
-            className="absolute -z-10 flex size-[87px] items-center justify-center gap-[9px] bg-[#2442f5]"
+            className="absolute -z-10 flex size-[87px] items-center justify-center gap-[9px] bg-[#0f766e]"
             style={{ left: 5 * 88 + 1, top: 1 * 88 + 1 }}
           >
             <span className="h-[22px] w-[13px] rounded-full bg-white" />
             <span className="h-[22px] w-[13px] rounded-full bg-white" />
           </span>
           <div className="flex items-center justify-between px-8 pt-7 text-[12px] text-white/55">
-            <span>[ openpromoter ]</span>
+            <span>[ authoraffiliate ]</span>
             <span className="num">v0.1 · AGPL-3.0</span>
           </div>
           <div className="flex flex-1 items-center justify-center px-10 py-10">
@@ -111,7 +116,7 @@ export function AuthCard({
             <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-white/65">
               {s.facts.map((f) => (
                 <li key={f} className="flex items-center gap-2">
-                  <span className="size-1.5 bg-[#548dff]" /> {f}
+                  <span className="size-1.5 bg-[#2dd4bf]" /> {f}
                 </li>
               ))}
             </ul>

@@ -39,13 +39,13 @@ describe("who partner emails come from", () => {
       "List-Unsubscribe": "<https://u.test/x>",
       "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
     });
-    // account emails keep OpenPromoter as the sender and carry no unsubscribe
+    // account emails keep Author Affiliate as the sender and carry no unsubscribe
     expect(envelope({ to: "x@y.test", subject: "s", html: "" }).headers).toBeUndefined();
   });
 
   it("a program name can't break the From header", () => {
     expect(senderName('Evil"\r\nBcc: all@x.test <a>')).toBe("Evil Bcc: all@x.test a");
-    expect(senderName("   ")).toBe("OpenPromoter");
+    expect(senderName("   ")).toBe("Author Affiliate");
     expect(senderName("x".repeat(90))).toHaveLength(60);
   });
 });
@@ -174,14 +174,14 @@ describe("logos in emails", () => {
     expect(emailSafeImage("https://x.test/logo.png")).toBe(true);
   });
 
-  it("shows the OpenPromoter PNG on our emails and the name next to any logo", async () => {
+  it("shows the Author Affiliate PNG on our emails and the name next to any logo", async () => {
     const ours = await renderNotice({
-      brandName: "OpenPromoter",
+      brandName: "Author Affiliate",
       preview: "p",
       title: "t",
       paragraphs: ["x"],
     });
-    expect(ours).toContain("https://openpromoter.com/email/openpromoter-logo.png");
+    expect(ours).toContain("https://authoraffiliate.com/email/authoraffiliate-logo.png");
     const theirs = await renderNotice({
       brandName: "DevDiggers",
       logoUrl: "https://devdiggers.test/logo.png",

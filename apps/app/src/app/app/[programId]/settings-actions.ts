@@ -20,6 +20,7 @@ import {
 import { and, count, eq, isNotNull, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { PRODUCT } from "@/lib/config";
 import { encrypt, randomToken, sha256 } from "@/lib/crypto";
 import { createId } from "@/lib/id";
 import { minorFactor, percentBp, toMinor } from "@/lib/money";
@@ -818,8 +819,8 @@ export async function inviteMemberAction(
         invitedBy: ctx.user.id,
         expiresAt: new Date(Date.now() + 7 * 86_400_000),
       });
-    await sendNotice(v.email, `Join ${ctx.program.name} on OpenPromoter`, {
-      brandName: "OpenPromoter",
+    await sendNotice(v.email, `Join ${ctx.program.name} on ${PRODUCT.name}`, {
+      brandName: PRODUCT.name,
       preview: "You're invited",
       title: `${ctx.user.name} invited you to ${ctx.program.name}`,
       paragraphs: [`You've been invited as ${v.role}. The invitation expires in 7 days.`],

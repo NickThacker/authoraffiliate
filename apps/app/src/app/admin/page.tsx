@@ -23,7 +23,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     <>
       <PageHeader
         title="Overview"
-        description="Every workspace on OpenPromoter Cloud. Read-only: nothing here changes a customer's data."
+        description="Every workspace on Author Affiliate. Read-only: nothing here changes a customer's data."
         actions={
           <>
             <span className="text-[13px] text-subtle">

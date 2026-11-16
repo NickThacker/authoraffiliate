@@ -53,8 +53,8 @@ export default async function PortalLayout({
         hosted && plan.id === "free" ? (
           <footer className="border-t border-border px-4 py-4 text-xs text-subtle md:px-8">
             Powered by{" "}
-            <a href="https://openpromoter.com" className="text-muted hover:text-fg">
-              OpenPromoter
+            <a href="https://authoraffiliate.com" className="text-muted hover:text-fg">
+              Author Affiliate
             </a>
           </footer>
         ) : null

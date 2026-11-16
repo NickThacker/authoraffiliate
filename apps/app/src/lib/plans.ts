@@ -8,11 +8,11 @@ export const PLANS = [
     /** Monthly AI allowance in micro-dollars (Cloud). */
     aiBudgetMicros: 250_000,
     features: [
-      "Everything in OpenPromoter",
+      "Everything in Author Affiliate",
       "Up to $1k/mo partner revenue",
       "Unlimited partners",
       "AI program setup",
-      "OpenPromoter badge on portal",
+      "Author Affiliate badge on portal",
     ],
   },
   {

@@ -99,7 +99,7 @@ export default async function PayoutsPage({ params }: { params: Promise<{ progra
           sub={`${paid?.n ?? 0} payouts`}
         />
         <Stat
-          label="OpenPromoter fees"
+          label="Author Affiliate fees"
           icon={Coins}
           value={mw(0)}
           sub="Provider fees (Stripe, PayPal, Wise) still apply"

@@ -208,8 +208,8 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
             {hosted && plan.id === "free" ? (
               <span>
                 Powered by{" "}
-                <a href="https://openpromoter.com" className="text-muted hover:text-fg">
-                  OpenPromoter
+                <a href="https://authoraffiliate.com" className="text-muted hover:text-fg">
+                  Author Affiliate
                 </a>
               </span>
             ) : null}

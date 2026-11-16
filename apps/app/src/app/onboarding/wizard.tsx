@@ -245,7 +245,7 @@ function StepStripe({
       <StepHeader
         n={2}
         title="Connect Stripe"
-        text="OpenPromoter reads payments from Stripe to attribute sales and calculate commissions even when cookies are blocked. Create a restricted key so it can only do what it needs."
+        text="Author Affiliate reads payments from Stripe to attribute sales and calculate commissions even when cookies are blocked. Create a restricted key so it can only do what it needs."
       />
       {initial.stripeConnected ? (
         <div className="mb-8 flex items-center gap-3 rounded-lg border border-border bg-success-soft px-4 py-3">

@@ -1,10 +1,14 @@
 /** Single source of truth for product naming. */
 export const PRODUCT = {
-  name: "OpenPromoter",
-  domain: "openpromoter.com",
-  github: "https://github.com/openpromoter/openpromoter",
+  name: "Author Affiliate",
+  domain: "authoraffiliate.com",
+  github: "https://github.com/NickThacker/authoraffiliate",
+  /** npm packages, SDK docs and the op.js API stay upstream OpenPromoter's, so installs keep working. */
   npm: "openpromoter",
   mcpPackage: "openpromoter-mcp",
-  tagline: "The open-source alternative to Rewardful and FirstPromoter",
-  company: "DevDiggers",
+  docs: "https://openpromoter.com/docs",
+  tagline: "Affiliate programs for author tools",
+  supportEmail: "partners@authoraffiliate.com",
+  /** AGPL-3.0 fork credit. */
+  upstream: { name: "OpenPromoter", url: "https://github.com/openpromoter/openpromoter" },
 } as const;

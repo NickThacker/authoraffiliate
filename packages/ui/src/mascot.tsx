@@ -11,9 +11,9 @@ export type BeaconPose =
   | "celebrates"
   | "resting";
 
-const BLUE = "#2442f5";
+const BLUE = "#0f766e";
 const LIGHT =
-  "[--m-body:#e2e7ff] [--m-eye:#0e0f11] [--m-feet:#aab6f2] [--m-shade:#c6cffa] [--m-stem:#aab6f2]";
+  "[--m-body:#dcf2ee] [--m-eye:#0e0f11] [--m-feet:#94cfc6] [--m-shade:#bde5de] [--m-stem:#94cfc6]";
 const GREY = "#9aa3b5";
 
 /** Rounded rect for an arm, rotated around its lower end. */
@@ -157,7 +157,7 @@ const FRONT: Partial<Record<BeaconPose, React.ReactNode>> = {
 };
 
 /**
- * Beacon, the OpenPromoter mascot: an ink body with the logo's blue dot on its antenna. It turns
+ * Beacon, the mascot inherited from OpenPromoter: an ink body with the teal accent dot on its antenna. It turns
  * light (Mist) in dark mode so it never disappears. Only for friendly moments, never on money or tax
  * screens, and never in the partner portal, which carries the founder's brand.
  */
@@ -188,7 +188,7 @@ export function Beacon({
           : "[--m-body:#1a1b20] [--m-eye:#fff] [--m-feet:#0c0d10] [--m-shade:#0c0d10] [--m-stem:#1a1b20]",
         light
           ? ""
-          : "dark:[--m-body:#e2e7ff] dark:[--m-eye:#0e0f11] dark:[--m-feet:#aab6f2] dark:[--m-shade:#c6cffa] dark:[--m-stem:#aab6f2]",
+          : "dark:[--m-body:#dcf2ee] dark:[--m-eye:#0e0f11] dark:[--m-feet:#94cfc6] dark:[--m-shade:#bde5de] dark:[--m-stem:#94cfc6]",
         className,
       )}
     >

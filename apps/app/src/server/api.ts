@@ -762,7 +762,7 @@ export function openApi(baseUrl: string) {
   return {
     openapi: "3.1.0",
     info: {
-      title: "OpenPromoter API",
+      title: "Author Affiliate API",
       version: "1.0.0",
       description:
         "Partner programs, tracking, commissions and payouts. Payouts prepared by API always need a person to approve them in the dashboard.",

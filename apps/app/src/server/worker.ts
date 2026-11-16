@@ -9,6 +9,7 @@ import {
   user,
 } from "@openpromoter/db";
 import { and, eq, inArray, isNull, lte, or, sql } from "drizzle-orm";
+import { PRODUCT } from "@/lib/config";
 import { DEMO } from "@/lib/demo-accounts";
 import { formatMoney, formatNumber, formatPercent } from "@/lib/money";
 import { runAutopilot } from "./ai/autopilot";
@@ -91,7 +92,7 @@ export function registerJobs() {
       String(p.to),
       String(p.subject),
       {
-        brandName: prog?.name ?? "OpenPromoter",
+        brandName: prog?.name ?? PRODUCT.name,
         brandColor: prog?.brand.color,
         logoUrl: prog?.brand.logoUrl,
         preview: String(p.subject),
@@ -179,7 +180,7 @@ export function registerJobs() {
                       : "Bank transfer",
             },
             ...(row.po.invoiceNumber ? [{ label: "Invoice", value: row.po.invoiceNumber }] : []),
-            { label: "Fees from OpenPromoter", value: formatMoney(0, row.po.currency) },
+            { label: "Fees from Author Affiliate", value: formatMoney(0, row.po.currency) },
           ],
           total: { label: "Paid to you", value: formatMoney(row.po.amount, row.po.currency) },
         },
@@ -247,7 +248,7 @@ export function registerJobs() {
     if (!row) return;
     for (const to of await teamEmails(row.prog.workspaceId)) {
       await sendNotice(to, `New partner application: ${row.pt.name}`, {
-        brandName: "OpenPromoter",
+        brandName: PRODUCT.name,
         preview: "Review a new application",
         title: `${row.pt.name} wants to promote ${row.prog.name}`,
         paragraphs: [

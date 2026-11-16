@@ -137,7 +137,7 @@ export async function checkoutUrl(
       display_name: PRODUCT.name,
       // the brand: white page, beacon blue button (the account default is a slate panel shared with other products)
       background_color: "#ffffff",
-      button_color: "#2442F5",
+      button_color: "#0F766E",
       // the header logo (black bot, blue beacon) on white, padded for Stripe's round crop: public/checkout-icon.png
       icon: { type: "url", url: `${env.APP_URL}/checkout-icon.png` },
     },
@@ -273,7 +273,7 @@ async function tellOwners(workspaceId: string, kind: "failed" | "ended" | "unpai
                 ? "We couldn't charge your card after several tries. You're on the Free plan now."
                 : "You're on the Free plan now.",
               kept,
-              "Free covers up to $1k a month in partner revenue and shows the OpenPromoter badge on your portal. Choose a plan again any time.",
+              "Free covers up to $1k a month in partner revenue and shows the Author Affiliate badge on your portal. Choose a plan again any time.",
             ],
             cta: { label: "Choose a plan", href },
           };

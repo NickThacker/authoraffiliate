@@ -11,7 +11,7 @@ const RUN: [string, string, string, "Paid" | "Approved" | "Held"][] = [
 ];
 const TONE = {
   Paid: "bg-[#3ecf8e]/14 text-[#6ee7b0]",
-  Approved: "bg-[#548dff]/16 text-[#8fb7ff]",
+  Approved: "bg-[#2dd4bf]/16 text-[#5eead4]",
   Held: "bg-[#f5b544]/14 text-[#f7c96b]",
 } as const;
 
@@ -59,7 +59,7 @@ function PayoutRun() {
       <div className="flex items-baseline justify-between border-t border-white/8 px-5 py-3.5">
         <span className="text-[12px] text-white/55">Through your Stripe account</span>
         <span className="text-[12px] text-white/55">
-          OpenPromoter fee <span className="num ml-1 text-[15px] font-medium text-white">$0.00</span>
+          Author Affiliate fee <span className="num ml-1 text-[15px] font-medium text-white">$0.00</span>
         </span>
       </div>
     </div>
@@ -77,7 +77,7 @@ function Setup() {
         {STEPS.map(([t, d, done], i) => (
           <li key={t} className="flex gap-3 py-2.5">
             <span
-              className={`num flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] ${done ? "bg-[#2442f5] text-white" : "text-white/70 ring-1 ring-white/20"}`}
+              className={`num flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] ${done ? "bg-[#0f766e] text-white" : "text-white/70 ring-1 ring-white/20"}`}
             >
               {done ? (
                 <svg

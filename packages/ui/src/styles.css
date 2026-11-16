@@ -11,8 +11,8 @@
 }
 
 /*
- * OpenPromoter v2: "ledger" system. See research/design-v2/DIRECTION.md.
- * One warm neutral scale, three text levels, one accent: ledger blue.
+ * Author Affiliate: OpenPromoter's "ledger" system (research/design-v2/DIRECTION.md) with the accent
+ * swapped to ink teal. One warm neutral scale, three text levels, one accent.
  */
 :root {
   --canvas: #f4f4f1; /* behind the panel */
@@ -26,11 +26,11 @@
   --text: #16171a;
   --text-muted: #5f6066;
   --text-subtle: #6c6d72;
-  --primary: #2442f5;
-  --primary-hover: #1a35dc;
+  --primary: #0f766e;
+  --primary-hover: #115e59;
   --primary-fg: #ffffff;
-  --primary-soft: #eef0fe;
-  --primary-text: #1b33c9;
+  --primary-soft: #e7f4f1;
+  --primary-text: #115e59;
   --ink: #16171a; /* secondary black button */
   --ink-fg: #ffffff;
   --success: #15763a;
@@ -39,26 +39,26 @@
   --warning-soft: #fdf3e1;
   --danger: #c8221f;
   --danger-soft: #fdecea;
-  --info: #2442f5;
-  --info-soft: #eef0fe;
+  --info: #0f766e;
+  --info-soft: #e7f4f1;
   --neutral: #5f6066;
   --neutral-soft: #f0f0ed;
-  --ring: #2442f5;
+  --ring: #0f766e;
   --dot: #e4e4e0; /* empty dot in dot-matrix charts */
-  --chart-1: #2442f5;
-  --chart-1-soft: #97a6fa; /* revenue behind commissions */
+  --chart-1: #0f766e;
+  --chart-1-soft: #8cc9c0; /* revenue behind commissions */
   --chart-2: #16171a;
-  --chart-3: #0d9488; /* teal: a third series that sits with blue and ink */
+  --chart-3: #2442f5; /* blue: a third series that sits with teal and ink */
   --chart-4: #17803d;
   --chart-5: #8b5cf6;
   --chart-6: #0e9fb8;
   --chart-7: #d6407a;
   --chart-8: #9a9ba0;
-  --accent: #2442f5;
-  --accent-hover: #1a35dc;
+  --accent: #0f766e;
+  --accent-hover: #115e59;
   --accent-fg: #ffffff;
-  --accent-soft: #eef0fe;
-  --accent-text: #1b33c9;
+  --accent-soft: #e7f4f1;
+  --accent-text: #115e59;
 }
 .dark {
   --canvas: #0c0c0d;
@@ -72,11 +72,11 @@
   --text: #ededee;
   --text-muted: #a1a1a7;
   --text-subtle: #8d8d94;
-  --primary: #548dff;
-  --primary-hover: #6ea1ff;
-  --primary-fg: #0b0d1f;
-  --primary-soft: #101d38;
-  --primary-text: #8fb7ff;
+  --primary: #2dd4bf;
+  --primary-hover: #5eead4;
+  --primary-fg: #042f2b;
+  --primary-soft: #0c2724;
+  --primary-text: #5eead4;
   --ink: #ededee;
   --ink-fg: #0c0c0d;
   --success: #4cc77a;
@@ -85,27 +85,27 @@
   --warning-soft: #2a1f0f;
   --danger: #f26b66;
   --danger-soft: #2c1414;
-  --info: #548dff;
-  --info-soft: #101d38;
+  --info: #2dd4bf;
+  --info-soft: #0c2724;
   --neutral: #a1a1a7;
   --neutral-soft: #1d1d20;
-  --ring: #548dff;
+  --ring: #2dd4bf;
   --dot: #242428;
-  --chart-1: #548dff;
-  --chart-1-soft: #2a457d;
+  --chart-1: #2dd4bf;
+  --chart-1-soft: #1d5c55;
   --chart-2: #ededee;
-  --chart-3: #2dd4bf;
+  --chart-3: #548dff;
   --chart-4: #4cc77a;
   --chart-5: #a78bfa;
   --chart-6: #38bdd8;
   --chart-7: #ec6a9c;
   --chart-8: #6f6f76;
   color-scheme: dark;
-  --accent: #548dff;
-  --accent-hover: #6ea1ff;
-  --accent-fg: #0b0d1f;
-  --accent-soft: #101d38;
-  --accent-text: #8fb7ff;
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-fg: #042f2b;
+  --accent-soft: #0c2724;
+  --accent-text: #5eead4;
 }
 .dark {
   color-scheme: dark;
@@ -126,11 +126,11 @@
     --text: #ededee;
     --text-muted: #a1a1a7;
     --text-subtle: #8d8d94;
-    --primary: #548dff;
-    --primary-hover: #6ea1ff;
-    --primary-fg: #0b0d1f;
-    --primary-soft: #101d38;
-    --primary-text: #8fb7ff;
+    --primary: #2dd4bf;
+    --primary-hover: #5eead4;
+    --primary-fg: #042f2b;
+    --primary-soft: #0c2724;
+    --primary-text: #5eead4;
     --ink: #ededee;
     --ink-fg: #0c0c0d;
     --success: #4cc77a;
@@ -139,27 +139,27 @@
     --warning-soft: #2a1f0f;
     --danger: #f26b66;
     --danger-soft: #2c1414;
-    --info: #548dff;
-    --info-soft: #101d38;
+    --info: #2dd4bf;
+    --info-soft: #0c2724;
     --neutral: #a1a1a7;
     --neutral-soft: #1d1d20;
-    --ring: #548dff;
+    --ring: #2dd4bf;
     --dot: #242428;
-    --chart-1: #548dff;
-    --chart-1-soft: #2a457d;
+    --chart-1: #2dd4bf;
+    --chart-1-soft: #1d5c55;
     --chart-2: #ededee;
-    --chart-3: #2dd4bf;
+    --chart-3: #548dff;
     --chart-4: #4cc77a;
     --chart-5: #a78bfa;
     --chart-6: #38bdd8;
     --chart-7: #ec6a9c;
     --chart-8: #6f6f76;
     color-scheme: dark;
-    --accent: #548dff;
-    --accent-hover: #6ea1ff;
-    --accent-fg: #0b0d1f;
-    --accent-soft: #101d38;
-    --accent-text: #8fb7ff;
+    --accent: #2dd4bf;
+    --accent-hover: #5eead4;
+    --accent-fg: #042f2b;
+    --accent-soft: #0c2724;
+    --accent-text: #5eead4;
   }
 }
 

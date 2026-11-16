@@ -22,7 +22,7 @@ export async function sendTestEmailAction(to: string) {
       brandName: PRODUCT.name,
       preview: "A test from the admin console",
       title: "This is a test email",
-      paragraphs: ["It was sent from the OpenPromoter admin console to check that email is working."],
+      paragraphs: ["It was sent from the Author Affiliate admin console to check that email is working."],
     });
     revalidatePath("/admin/emails");
     if (!r.delivered)

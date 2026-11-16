@@ -9,6 +9,7 @@ import {
 } from "@openpromoter/emails";
 import { and, eq, like, or } from "drizzle-orm";
 import nodemailer from "nodemailer";
+import { PRODUCT } from "@/lib/config";
 import { createId } from "@/lib/id";
 import { db } from "./db";
 import { env } from "./env";
@@ -38,7 +39,7 @@ export const senderName = (name: string) =>
     .replace(/[\r\n"<>\\]/g, " ")
     .replace(/\s+/g, " ")
     .trim()
-    .slice(0, 60) || "OpenPromoter";
+    .slice(0, 60) || PRODUCT.name;
 
 /** The envelope every transport sends: who it is from, where replies go, and the unsubscribe headers. */
 export function envelope(mail: Mail) {
@@ -196,7 +197,7 @@ export async function sendReport(to: string, subject: string, props: ReportProps
 
 /**
  * Emails a program sends its partners: the program's name as the sender and replies to the founder
- * (the program's reply-to, else the workspace owner), never to OpenPromoter.
+ * (the program's reply-to, else the workspace owner), never to Author Affiliate.
  */
 export async function programSender(prog: {
   id: string;

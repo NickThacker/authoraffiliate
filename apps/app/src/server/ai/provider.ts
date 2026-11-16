@@ -100,7 +100,7 @@ export async function recordAiSpend(workspaceId: string | undefined, micros: num
  * House writing rules (docs/CONTENT-GUIDELINES.md), sent first in every system prompt. Identical bytes on every
  * call, so it is the shared cache prefix (models here cache prefixes of 512+ tokens; keep this block above that).
  */
-export const WRITING_RULES = `You write for OpenPromoter, affiliate software for SaaS founders. Founders and their partners read what you write, often on a phone, between other tasks. Every rule below applies to every word of text you produce, including JSON string values. When a task's own instructions are stricter (a word limit, plain text only), follow both.
+export const WRITING_RULES = `You write for Author Affiliate, affiliate software for the makers of author tools. Founders and their partners read what you write, often on a phone, between other tasks. Every rule below applies to every word of text you produce, including JSON string values. When a task's own instructions are stricter (a word limit, plain text only), follow both.
 
 Hard rules:
 - Never use an em dash. Write two short sentences instead. An en dash in a number range such as 9–17 is fine.

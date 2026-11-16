@@ -50,6 +50,7 @@ import { useEffect, useState } from "react";
 import { LogoMark } from "@/components/logo";
 import { useTheme } from "@/components/theme";
 import { authClient } from "@/lib/auth-client";
+import { PRODUCT } from "@/lib/config";
 import { t } from "@/lib/i18n";
 import { CommandPalette } from "./command-palette";
 
@@ -337,7 +338,7 @@ export function AppShell({ program, programs, user, role, counts, children }: Sh
             collapsed={collapsed}
           />
           <NavLink
-            item={{ href: "https://openpromoter.com/docs", label: t("nav.docs"), icon: BookOpen }}
+            item={{ href: PRODUCT.docs, label: t("nav.docs"), icon: BookOpen }}
             active={false}
             collapsed={collapsed}
           />

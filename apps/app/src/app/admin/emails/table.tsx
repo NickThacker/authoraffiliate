@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { type Column, DataTable, type Tab } from "@/components/data-table";
+import { PRODUCT } from "@/lib/config";
 import { emailPreviewAction } from "./actions";
 
 type Row = {
@@ -84,7 +85,7 @@ export function EmailsTable(props: {
     {
       key: "program",
       header: "Program",
-      render: (r) => <span className="text-muted">{r.program ?? "OpenPromoter"}</span>,
+      render: (r) => <span className="text-muted">{r.program ?? PRODUCT.name}</span>,
     },
     {
       key: "status",
@@ -133,7 +134,7 @@ export function EmailsTable(props: {
     ? [
         ["To", open.to],
         ["Subject", open.subject],
-        ["From program", open.program ?? "OpenPromoter"],
+        ["From program", open.program ?? PRODUCT.name],
         ["Sent", when(open.at)],
         ["Last report", when(open.updatedAt)],
         ["Provider note", open.detail || "None"],

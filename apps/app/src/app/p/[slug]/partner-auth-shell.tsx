@@ -42,8 +42,8 @@ export async function PartnerAuthShell({
             {hosted && plan.id === "free" ? (
               <p className="px-4 pb-5 text-xs text-subtle sm:px-10">
                 Powered by{" "}
-                <a href="https://openpromoter.com" className="text-muted hover:text-fg">
-                  OpenPromoter
+                <a href="https://authoraffiliate.com" className="text-muted hover:text-fg">
+                  Author Affiliate
                 </a>
               </p>
             ) : null}

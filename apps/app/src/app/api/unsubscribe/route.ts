@@ -14,7 +14,7 @@ body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:c
 main{max-width:420px;width:100%;background:#fff;border:1px solid #E4E4E0;border-radius:12px;padding:28px}
 h1{margin:0;font-size:20px;line-height:28px;font-weight:500}
 p{margin:8px 0 0;font-size:15px;line-height:24px;color:#5F6066}
-button{margin-top:20px;height:36px;padding:0 14px;border:0;border-radius:8px;background:#2442F5;color:#fff;font:500 14px/36px inherit;cursor:pointer}
+button{margin-top:20px;height:36px;padding:0 14px;border:0;border-radius:8px;background:#0F766E;color:#fff;font:500 14px/36px inherit;cursor:pointer}
 @media (prefers-color-scheme:dark){body{background:#0C0C0D;color:#EDEDEE}main{background:#131315;border-color:#2F2F33}p{color:#A1A1A7}}
 </style></head><body><main><h1>${title}</h1><p>${body}</p>${form}</main></body></html>`,
     { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } },
