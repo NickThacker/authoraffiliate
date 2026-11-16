@@ -199,7 +199,7 @@ Any other billing system can report payments through `POST /api/v1/conversions`.
 
 **Self-host:** free, with every feature and no limits on partners or revenue.
 
-**[OpenPromoter Cloud](https://openpromoter.com/pricing/):** free up to $1,000 a month in partner revenue. Above that, plans cost $29, $79 or $199 a month with AI included. No plan takes a percentage of your payouts.
+**[OpenPromoter Cloud](https://openpromoter.com/pricing/):** free up to $1,000 a month in partner revenue. Above that, plans cost $29, $79 or $199 a month, or 2 months free when you pay yearly ($290, $790 or $1,990), with AI included. No plan takes a percentage of your payouts.
 
 ## Tech stack
 
