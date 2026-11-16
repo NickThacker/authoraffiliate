@@ -94,8 +94,18 @@ export default async function BillingPage({
           <Progress value={(s.usage / s.plan.revenueLimit) * 100} label="Usage" />
           {s.over ? (
             <p className="mt-2 text-xs text-warning">
-              Tracking and payouts keep working. After two full months over, the dashboard asks you to
-              upgrade.
+              {s.plan.id === PLANS.at(-1)?.id ? (
+                // the top plan never sees the upgrade screen (billing-plans.ts upgradeRequired)
+                <>
+                  Everything keeps working with no upgrade screen. Email{" "}
+                  <a href="mailto:support@openpromoter.com" className="underline">
+                    support@openpromoter.com
+                  </a>{" "}
+                  for a custom price.
+                </>
+              ) : (
+                "Tracking and payouts keep working. After two full months over, the dashboard asks you to upgrade."
+              )}
             </p>
           ) : null}
           {ai ? (
