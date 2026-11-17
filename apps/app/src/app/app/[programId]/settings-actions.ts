@@ -47,7 +47,7 @@ import { rebaseProgram } from "@/server/fx";
 import { enqueue } from "@/server/jobs";
 import { assertFounderVerified } from "@/server/partners";
 import { limit } from "@/server/ratelimit";
-import { createProgramFromUrl } from "@/server/setup";
+import { createProgramFromUrl, moveProgramToOwnWorkspace } from "@/server/setup";
 import { connectStripeKey, importStripe, setWebhookSecret } from "@/server/stripe-service";
 
 const rv = (programId: string, p = "/settings") => revalidatePath(`/app/${programId}${p}`, "layout");
@@ -936,18 +936,34 @@ export async function subscribeReportAction(
   );
 }
 
-export async function createProgramAction(programId: string, input: { websiteUrl: string; name?: string }) {
+export async function createProgramAction(
+  programId: string,
+  input: { websiteUrl: string; name?: string; ownStripe?: boolean },
+) {
   return safe(async () => {
     const ctx = await actionCtx(programId, "program.write");
     const v = z
-      .object({ websiteUrl: z.string().min(3).max(300), name: z.string().max(80).optional() })
+      .object({
+        websiteUrl: z.string().min(3).max(300),
+        name: z.string().max(80).optional(),
+        ownStripe: z.boolean().optional(),
+      })
       .parse(input);
+    // A product billed through its own Stripe account gets a new workspace (createProgramFromUrl makes one).
     const p = await createProgramFromUrl(ctx.user.id, v.websiteUrl, {
-      workspaceId: ctx.program.workspaceId,
+      workspaceId: v.ownStripe ? undefined : ctx.program.workspaceId,
       name: v.name || undefined,
     });
     return p.id;
   }, "Program created");
+}
+
+export async function moveProgramWorkspaceAction(programId: string) {
+  return safe(async () => {
+    const ctx = await actionCtx(programId, "billing.write");
+    await moveProgramToOwnWorkspace(ctx.program, ctx.actor);
+    revalidatePath(`/app/${programId}`, "layout");
+  }, "Moved to its own workspace");
 }
 
 export async function networkCategoryAction(programId: string, category: string) {

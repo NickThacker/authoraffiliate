@@ -2,6 +2,7 @@ import { Badge, Card, CardHeader } from "@openpromoter/ui";
 import Link from "next/link";
 import { programCtx, userPrograms } from "@/server/context";
 import { DeleteProgram } from "./delete";
+import { MoveProgram } from "./move";
 import { NewProgram } from "./new";
 
 const day = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -10,12 +11,13 @@ export default async function ProgramsPage({ params }: { params: Promise<{ progr
   const { programId } = await params;
   const { user, role, program: current } = await programCtx(programId);
   const programs = await userPrograms(user.id);
+  const workspaceName = programs.find((p) => p.id === programId)?.workspaceName ?? "this workspace";
   return (
     <>
       <Card>
         <CardHeader
           title="Programs"
-          description="Run several programs (for example per product or per brand) from one workspace. Open one to manage or delete it."
+          description="Programs in the same workspace share its Stripe account and customers. A product with its own Stripe account belongs in its own workspace. Open a program to manage, move or delete it."
         />
         <ul className="divide-y divide-border border-t border-border">
           {programs.map((p) => (
@@ -41,6 +43,9 @@ export default async function ProgramsPage({ params }: { params: Promise<{ progr
         </ul>
       </Card>
       {role === "owner" || role === "admin" ? <NewProgram programId={programId} /> : null}
+      {role === "owner" && programs.filter((p) => p.workspaceId === current.workspaceId).length > 1 ? (
+        <MoveProgram programId={programId} name={current.name} workspace={workspaceName} />
+      ) : null}
       {role === "owner" ? (
         <DeleteProgram programId={programId} name={current.name} created={day(current.createdAt)} />
       ) : null}

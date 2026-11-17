@@ -1,4 +1,15 @@
-import { billingPrice, member, partnerGroup, program, workspace } from "@openpromoter/db";
+import {
+  billingPrice,
+  commission,
+  member,
+  partner,
+  partnerGroup,
+  payout,
+  program,
+  prospect,
+  referral,
+  workspace,
+} from "@openpromoter/db";
 import { and, asc, eq } from "drizzle-orm";
 import { createCode, createId, slugify } from "@/lib/id";
 import { RESERVED_SUBDOMAINS } from "@/lib/subdomain";
@@ -19,6 +30,54 @@ async function uniqueSlug(table: typeof program | typeof workspace, base: string
   return `${slug}-${createCode(6)}`;
 }
 
+/**
+ * A workspace is one business with one Stripe account: its programs share that connection and its customers.
+ * A product billed through a different Stripe account gets its own workspace under the same login.
+ */
+export async function createWorkspace(userId: string, name: string) {
+  const id = createId("ws");
+  await db()
+    .insert(workspace)
+    .values({ id, name, slug: await uniqueSlug(workspace, name) });
+  await db().insert(member).values({ workspaceId: id, userId, role: "owner" });
+  return id;
+}
+
+/**
+ * Moves a program into a new workspace of its own so it can connect its own Stripe account. Only before it has
+ * partners or money history: those records belong to the Stripe account that produced them. Everyone in the old
+ * workspace keeps their role. Recruiter suggestions drawn from the old workspace's customers are dropped.
+ */
+export async function moveProgramToOwnWorkspace(prog: typeof program.$inferSelect, actor: Actor) {
+  const siblings = await db()
+    .select({ id: program.id })
+    .from(program)
+    .where(eq(program.workspaceId, prog.workspaceId));
+  if (siblings.length < 2) throw new Error("This program already has a workspace to itself");
+  for (const t of [partner, referral, commission, payout]) {
+    const [hit] = await db().select({ id: t.id }).from(t).where(eq(t.programId, prog.id)).limit(1);
+    if (hit)
+      throw new Error(
+        "This program already has partners or sales, so it stays where it is. Its history belongs to the current Stripe account.",
+      );
+  }
+  const members = await db().select().from(member).where(eq(member.workspaceId, prog.workspaceId));
+  const wsId = createId("ws");
+  const slug = await uniqueSlug(workspace, prog.name);
+  await db().transaction(async (tx) => {
+    await tx.insert(workspace).values({ id: wsId, name: prog.name, slug });
+    await tx
+      .insert(member)
+      .values(members.map((m) => ({ workspaceId: wsId, userId: m.userId, role: m.role })));
+    await tx.update(program).set({ workspaceId: wsId }).where(eq(program.id, prog.id));
+    await tx.delete(prospect).where(and(eq(prospect.programId, prog.id), eq(prospect.source, "customer")));
+  });
+  const detail = { program: prog.name, from: prog.workspaceId, to: wsId };
+  await audit(prog.workspaceId, actor, "program.move_workspace", { type: "program", id: prog.id }, detail);
+  await audit(wsId, actor, "program.move_workspace", { type: "program", id: prog.id }, detail);
+  return wsId;
+}
+
 /** Step 1: one URL in, a branded workspace + program out. */
 export async function createProgramFromUrl(
   userId: string,
@@ -27,18 +86,7 @@ export async function createProgramFromUrl(
 ) {
   const site = await fetchSite(websiteUrl);
   const name = opts.name?.trim() || site.name;
-  let wsId = opts.workspaceId;
-  if (!wsId) {
-    wsId = createId("ws");
-    await db()
-      .insert(workspace)
-      .values({
-        id: wsId,
-        name,
-        slug: await uniqueSlug(workspace, name),
-      });
-    await db().insert(member).values({ workspaceId: wsId, userId, role: "owner" });
-  }
+  const wsId = opts.workspaceId ?? (await createWorkspace(userId, name));
   const [p] = await db()
     .insert(program)
     .values({
