@@ -39,8 +39,15 @@ const PRICE: Record<string, [number, number]> = {
 };
 const WEB_SEARCH_MICROS = 10_000; // $10 per 1,000 searches
 
-/** AI_MODEL (self-host) wins; otherwise the cheapest model that does the job. */
-export const anthropicModel = (tier: AiTier = "fast") => env.AI_MODEL ?? MODELS[tier];
+/**
+ * AI_MODEL (self-host) wins when Anthropic is the main provider; otherwise the cheapest model that does the job.
+ * With AI_PROVIDER=openai, AI_MODEL names an OpenAI model, so Claude-only features (web search) use the defaults.
+ */
+export const anthropicModel = (tier: AiTier = "fast") =>
+  (aiProvider() === "anthropic" ? env.AI_MODEL : undefined) ?? MODELS[tier];
+
+/** Creator web search runs on Claude whenever an Anthropic key is set, even if other features use OpenAI. */
+export const webSearchEnabled = () => Boolean(env.ANTHROPIC_API_KEY);
 
 export function usageMicros(
   model: string,

@@ -6,16 +6,15 @@ import { createId } from "@/lib/id";
 import { formatMoney } from "@/lib/money";
 import { type Actor, audit } from "../audit";
 import { db } from "../db";
-import { env } from "../env";
 import { programUrl } from "../ref-link";
 import {
   aiAllowed,
   aiJson,
-  aiProvider,
   anthropicClient,
   anthropicModel,
   recordAiSpend,
   usageMicros,
+  webSearchEnabled,
 } from "./provider";
 
 type Program = typeof program.$inferSelect;
@@ -115,7 +114,7 @@ const creatorSchema = z.object({
  * offers manual add and CSV import instead.
  */
 export async function findCreatorProspects(prog: Program, niche: string, limit = 10) {
-  if (aiProvider() !== "anthropic" || !env.ANTHROPIC_API_KEY) return 0;
+  if (!webSearchEnabled()) return 0;
   if (!(await aiAllowed(prog.workspaceId))) return 0;
   const client = anthropicClient();
   // Measured 2026-11-06: Haiku with the basic search found 5 fitting creators for $0.02-0.03 a run. Sonnet with

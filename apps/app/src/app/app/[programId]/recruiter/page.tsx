@@ -1,7 +1,7 @@
 import { prospect } from "@openpromoter/db";
 import { desc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
-import { aiProvider } from "@/server/ai/provider";
+import { webSearchEnabled } from "@/server/ai/provider";
 import { inviteUrl } from "@/server/ai/recruiter";
 import { programCtx } from "@/server/context";
 import { db } from "@/server/db";
@@ -23,7 +23,7 @@ export default async function RecruiterPage({ params }: { params: Promise<{ prog
       description="Paying customers often make the best partners. The recruiter ranks yours from Stripe and finds creators in your niche. It drafts an invite you send from your own email."
       programId={programId}
       canWrite={role === "owner" || role === "admin"}
-      webSearch={aiProvider() === "anthropic"}
+      webSearch={webSearchEnabled()}
       rows={rows.map((r) => ({
         id: r.id,
         source: r.source,
