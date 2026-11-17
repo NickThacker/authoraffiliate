@@ -20,7 +20,7 @@ export default async function RecruiterPage({ params }: { params: Promise<{ prog
     .limit(300);
   return (
     <RecruiterView
-      description="Your best partners are usually your happiest customers. The recruiter ranks them from Stripe, finds creators in your niche and drafts a personal invite you send from your own email."
+      description="Paying customers often make the best partners. The recruiter ranks yours from Stripe and finds creators in your niche. It drafts an invite you send from your own email."
       programId={programId}
       canWrite={role === "owner" || role === "admin"}
       webSearch={aiProvider() === "anthropic"}

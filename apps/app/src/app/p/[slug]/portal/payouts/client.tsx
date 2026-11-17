@@ -21,9 +21,9 @@ const SHORT: Record<string, string> = {
   manual: "Bank transfer",
 };
 const HINT: Record<string, string> = {
-  stripe: "Straight to your bank with the tax form included",
+  stripe: "To your bank through Stripe. Stripe also collects your tax form.",
   paypal: "To your PayPal email",
-  wise: "To your Wise account with low FX fees",
+  wise: "To your Wise account",
   manual: "The team pays you by invoice",
 };
 

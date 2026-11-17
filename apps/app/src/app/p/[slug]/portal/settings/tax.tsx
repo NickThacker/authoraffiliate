@@ -33,7 +33,7 @@ export function TaxForm({
   return (
     <SettingsCard
       title="Tax information"
-      description="US persons fill in a W-9; everyone else a W-8BEN (individuals) or W-8BEN-E (companies). EU businesses add a VAT ID so invoices use the reverse charge."
+      description="If you're a US person, fill in a W-9. Everyone else fills in a W-8BEN as an individual or a W-8BEN-E as a company. EU businesses also add a VAT ID and their invoices use the reverse charge."
     >
       <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface-2/60 px-4 py-3 dark:bg-surface-2">
         <span className="text-[13px] text-muted">Status</span>

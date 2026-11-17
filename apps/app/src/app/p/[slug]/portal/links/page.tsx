@@ -37,7 +37,7 @@ export default async function PortalLinks({ params }: { params: Promise<{ slug: 
     <>
       <PageHeader
         title="Links"
-        description="Every link is tracked on its own. You can see which post, video or channel brings customers."
+        description="Make a separate link for each post, video or newsletter. Then you can see which one gets people to pay."
       />
       <PartnerLinks
         slug={slug}
@@ -60,7 +60,7 @@ export default async function PortalLinks({ params }: { params: Promise<{ slug: 
         <Card className="mt-4">
           <CardHeader
             title="Your coupon codes"
-            description="Share these where links don't work (podcasts, video, print). Sales with your code are credited to you."
+            description="Use these where people can't click a link, like a podcast or a printed flyer. Anyone who pays with your code counts as your referral."
           />
           <ul className="flex flex-wrap gap-3 border-t border-border p-5">
             {codes.map((c) => (

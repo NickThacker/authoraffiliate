@@ -54,15 +54,16 @@ export default async function PortalRecruits({ params }: { params: Promise<{ slu
         title="Recruits"
         description={
           <>
-            Bring other partners to {p.name}. You earn <b className="font-medium text-fg">{rate}</b> of every
-            commission they earn. Your own commission stays the same.
+            Invite other people to become {p.name} partners. You earn{" "}
+            <b className="font-medium text-fg">{rate}</b> of every commission they earn. Your own commission
+            stays the same.
           </>
         }
       />
       <Card>
         <CardHeader
           title="Your recruit link"
-          description="Send it to people who could promote this product. Anyone who applies through it joins your team."
+          description="Send it to people who might want to recommend this too. Anyone who applies through it joins your team."
         />
         <div className="border-t border-border p-5">
           {pt.status === "approved" ? (

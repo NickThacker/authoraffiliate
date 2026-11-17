@@ -184,7 +184,7 @@ export default async function PortalMessages({
             )}
             {!open && direct.length === 0 ? (
               <div className="m-auto max-w-[36ch] text-center text-[13px] leading-5 text-muted">
-                No messages yet. Questions about a sale, a payout or the content kit go straight to the team.
+                No messages yet. If you have a question about a sale or a payout, write to the team here.
               </div>
             ) : null}
           </div>

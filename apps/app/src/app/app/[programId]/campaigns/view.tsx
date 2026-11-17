@@ -209,7 +209,7 @@ export function CampaignsView({
             icon={Megaphone}
             mascot="thinking"
             title="No campaigns yet"
-            description="Campaigns are the fastest way to wake partners up. Try one of the examples above."
+            description="A campaign gives quiet partners a reason to post again. Start from one of the examples above."
           />
         </Card>
       )}

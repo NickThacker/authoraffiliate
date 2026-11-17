@@ -53,7 +53,7 @@ export function ApplyForm({
   if (inviteOnly && !invite)
     return (
       <p className="mt-8 rounded-lg border border-dashed border-border-strong p-5 text-[14px] leading-6 text-muted">
-        This program is invite-only. Ask the team for an invitation link.
+        This program is invite-only. You need an invite link to join.
       </p>
     );
   return (

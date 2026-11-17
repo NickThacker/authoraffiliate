@@ -158,8 +158,7 @@ export function PartnersTable({
       empty={{
         icon: Users,
         title: "No partners yet",
-        description:
-          "Invite customers who already love your product or let the recruiter find partners for you.",
+        description: "Invite authors who already use your tool. The recruiter can suggest people to ask.",
       }}
     />
   );

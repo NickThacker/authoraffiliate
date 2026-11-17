@@ -72,7 +72,7 @@ describe("partner email choices and one-click unsubscribe", () => {
     const post = await unsubscribePost(
       new Request(url, { method: "POST", body: "List-Unsubscribe=One-Click" }),
     );
-    expect(await post.text()).toContain("You won't get commission emails by email anymore.");
+    expect(await post.text()).toContain("You won't get commission emails from now on.");
     [row] = await db().select().from(partner).where(eq(partner.id, p.id));
     expect(row).toMatchObject({ emailCommissions: false, emailMessages: true });
 
@@ -124,7 +124,10 @@ describe("partner email choices and one-click unsubscribe", () => {
     await sendMessage(f.program, { partnerId: null, subject: "News", body: "Hello partners" });
     await drain();
     const onMail = await sent(on.email);
-    expect(onMail.map((m) => m.subject).sort()).toEqual(["News", "You earned $30.00 from Acme"]);
+    expect(onMail.map((m) => m.subject).sort()).toEqual([
+      "News",
+      "You earned $30.00 from a referral to Acme",
+    ]);
     expect(onMail.every((m) => m.programId === f.program.id)).toBe(true);
     expect(await sent(off.email)).toHaveLength(0);
   });

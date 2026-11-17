@@ -11,7 +11,7 @@ export function QrDialog({ url, onClose }: { url: string | null; onClose: () => 
     <Dialog open={!!url} onOpenChange={(o) => !o && onClose()}>
       <DialogContent
         title="QR code"
-        description="For print, slides and video. Scans count as clicks on this link."
+        description="Put it on a flyer, a slide or a video. Each scan counts as a click on this link."
       >
         {url ? (
           <div className="flex flex-col items-center gap-4">

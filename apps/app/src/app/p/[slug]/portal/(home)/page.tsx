@@ -180,7 +180,7 @@ export default async function PortalHome({ params }: { params: Promise<{ slug: s
               value={formatNumber(refs?.leads ?? 0)}
               sub={
                 <>
-                  <b>{formatNumber(refs?.customers ?? 0)}</b> became paying customers
+                  <b>{formatNumber(refs?.customers ?? 0)}</b> of them paid
                 </>
               }
             />
@@ -190,7 +190,7 @@ export default async function PortalHome({ params }: { params: Promise<{ slug: s
               value={formatNumber(nClicks)}
               sub={
                 <>
-                  <b>{(conv * 100).toFixed(1)}%</b> turned into customers
+                  <b>{(conv * 100).toFixed(1)}%</b> led to a sale
                 </>
               }
             />
@@ -225,7 +225,7 @@ export default async function PortalHome({ params }: { params: Promise<{ slug: s
           />
           {live.length ? (
             <Card>
-              <CardHeader title="Running now" description="Campaigns that pay extra this month." />
+              <CardHeader title="Running now" description="Bonuses you can earn right now." />
               <ul className="divide-y divide-border border-t border-border">
                 {live.map((c) => (
                   <li key={c.id} className="flex flex-col gap-2 px-5 py-3">

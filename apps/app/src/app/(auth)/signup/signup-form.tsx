@@ -62,7 +62,7 @@ export function SignupForm({
     <AuthCard
       scene="signup"
       title="Create your account"
-      subtitle="Free and open source. Your partner program is live in about five minutes."
+      subtitle="Set up a partner program so authors can recommend your tools for a commission."
       footer={
         <>
           Already have an account?{" "}

@@ -168,9 +168,9 @@ export function CommissionsTable({
       }
       empty={{
         icon: Coins,
-        title: "Commissions appear after your first referred sale",
+        title: "No commissions yet",
         description:
-          "Connect Stripe and install tracking. Every payment from a referred customer creates a commission here.",
+          "Connect Stripe and install tracking. Each payment from a referred customer then adds a commission here.",
         action: (
           <Button asChild variant="primary">
             <Link href={`/app/${programId}/settings/integrations`}>Connect Stripe</Link>

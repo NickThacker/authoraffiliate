@@ -74,7 +74,7 @@ export default async function CustomersPage({
     <>
       <PageHeader
         title="Customers"
-        description="Signups and customers your partners referred. Status follows Stripe: trials, upgrades, cancellations and refunds update automatically."
+        description="Authors who signed up or paid through a partner. Trials, upgrades, cancellations and refunds sync from Stripe."
       />
       <CustomersTable
         programId={programId}

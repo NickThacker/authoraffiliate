@@ -113,7 +113,7 @@ export function registerJobs() {
     if (!row || row.c.status === "held" || !row.pt.emailCommissions) return;
     await sendNotice(
       row.pt.email,
-      `You earned ${formatMoney(row.c.amount, row.c.currency)} from ${row.prog.name}`,
+      `You earned ${formatMoney(row.c.amount, row.c.currency)} from a referral to ${row.prog.name}`,
       {
         brandName: row.prog.name,
         brandColor: row.prog.brand.color,
@@ -122,13 +122,13 @@ export function registerJobs() {
         title: `You earned ${formatMoney(row.c.amount, row.c.currency)}`,
         paragraphs: [
           row.c.kind === "override"
-            ? `A partner you recruited just earned a commission, and you earn ${row.prog.overrideRate / 100}% of it. It is pending for ${row.prog.holdDays} days (the refund window) and then joins your next payout.`
-            : `A customer you referred just paid. The commission is pending for ${row.prog.holdDays} days (the refund window) and then joins your next payout.`,
+            ? `A partner you brought in just made a sale. You get ${row.prog.overrideRate / 100}% of their commission. We hold it for ${row.prog.holdDays} days in case of a refund. After that it goes into your next payout.`
+            : `Someone you referred just paid for ${row.prog.name}. We hold the commission for ${row.prog.holdDays} days in case of a refund. After that it goes into your next payout.`,
         ],
         ledger: {
           rows: [
             ...(row.c.saleAmount
-              ? [{ label: "Customer payment", value: formatMoney(row.c.saleAmount, row.c.currency) }]
+              ? [{ label: "Their payment", value: formatMoney(row.c.saleAmount, row.c.currency) }]
               : []),
             ...(row.c.holdUntil
               ? [
@@ -161,8 +161,8 @@ export function registerJobs() {
         brandName: row.prog.name,
         brandColor: row.prog.brand.color,
         logoUrl: row.prog.brand.logoUrl,
-        preview: "Your commissions were sent. The invoice is in your portal.",
-        title: `Payout sent: ${formatMoney(row.po.amount, row.po.currency)}`,
+        preview: "Your invoice is in the partner portal.",
+        title: `We sent you ${formatMoney(row.po.amount, row.po.currency)}`,
         paragraphs: [
           `We sent your commissions via ${row.po.method === "stripe" ? "Stripe" : row.po.method === "paypal" ? "PayPal" : row.po.method === "wise" ? "Wise" : "bank transfer"}. ${row.po.invoiceNumber ? `Invoice ${row.po.invoiceNumber} is` : "The invoice is"} in your portal.`,
         ],
@@ -198,16 +198,16 @@ export function registerJobs() {
     if (!row) return;
     await sendNotice(
       row.pt.email,
-      `You're in: ${row.prog.name} partner program`,
+      `You're approved for the ${row.prog.name} partner program`,
       {
         brandName: row.prog.name,
         brandColor: row.prog.brand.color,
         logoUrl: row.prog.brand.logoUrl,
-        preview: "Your application was approved",
+        preview: "Your referral link is inside",
         title: "Your partner account is ready",
         paragraphs: [
-          `Your partner account for ${row.prog.name} is ready. Your link is ${codeUrl(row.prog, row.pt.code)}.`,
-          "Add a payout method in the portal so we can pay you. Then grab ready-made posts from the content kit.",
+          `Thanks for joining. You can start sharing ${row.prog.name} today. Your link is ${codeUrl(row.prog, row.pt.code)}.`,
+          "Add a payout method in the portal so we can pay you. The content kit has sample posts you can copy and change.",
         ],
         cta: { label: "Open your portal", href: portal(row.prog) },
       },
@@ -231,8 +231,8 @@ export function registerJobs() {
         preview: "An update on your application",
         title: "Thanks for applying",
         paragraphs: [
-          `Thank you for applying to the ${row.prog.name} partner program. The team reviewed your application and can't accept it right now.`,
-          "Programs often look for a close fit with their customers. Reply to this email if you have questions.",
+          `Thanks for applying to the ${row.prog.name} partner program. We read your application and can't accept it right now.`,
+          "We look for partners whose audience is a close fit for the tool. If you have questions, just reply to this email.",
         ],
       },
       // the reply reaches the program owner, who made the call
@@ -287,7 +287,7 @@ export async function sendProgramReport(
     .where(and(eq(reportSubscription.programId, programId), eq(reportSubscription.email, email)));
   await sendReport(
     email,
-    `${prog.name} partners: ${m(cur.revenue)} ${monthly ? "in the last 30 days" : "this week"}`,
+    `Partners brought in ${m(cur.revenue)} for ${prog.name} ${monthly ? "in the last 30 days" : "this week"}`,
     {
       brandName: prog.name,
       periodLabel: `${monthly ? "30 days" : "Week"} ending ${ending}`,
@@ -298,7 +298,7 @@ export async function sendProgramReport(
         { label: "MRR from partners", value: m(cur.mrr) },
         { label: "owed to partners", value: m(cur.owed) },
       ],
-      highlights: top.map((t) => `${t.name}: ${m(t.revenue)} from ${t.customers} customers`),
+      highlights: top.map((t) => `${t.name} brought in ${m(t.revenue)} from ${t.customers} customers`),
       nextSteps: [
         cur.owed > 0 ? `Approve payouts (${m(cur.owed)} owed)` : null,
         cur.held > 0 ? `Review ${m(cur.held)} in held commissions` : null,

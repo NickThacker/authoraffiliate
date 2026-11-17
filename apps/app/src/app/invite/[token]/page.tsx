@@ -12,7 +12,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
     redirect(p ? `/app/${p.id}` : "/app");
   }
   return (
-    <AuthCard title="Invitation problem">
+    <AuthCard title="This invite didn't work">
       <p className="text-[13px] text-muted">{r.error}</p>
     </AuthCard>
   );

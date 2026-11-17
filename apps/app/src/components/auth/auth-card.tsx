@@ -6,13 +6,13 @@ import { AuthScene, type SceneKind } from "./product-fragment";
 const SCENE: Record<SceneKind, { pose: BeaconPose; line: string; facts: string[] }> = {
   signin: {
     pose: "hello",
-    line: "Every commission traced to the invoice that created it.",
-    facts: ["0% of payouts", "Traced to Stripe", "Open source"],
+    line: "Tell other authors about the tools you use and get paid when they subscribe.",
+    facts: ["Free to join", "See each sale in your portal"],
   },
   signup: {
     pose: "celebrates",
-    line: "From Stripe key to first partner in about five minutes.",
-    facts: ["0% of payouts", "No card", "Open source"],
+    line: "Set your commission and invite the authors who already use your tools.",
+    facts: ["No fees on partner payouts", "Runs on your own server"],
   },
 };
 

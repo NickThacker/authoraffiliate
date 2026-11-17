@@ -107,7 +107,7 @@ export function CustomersTable({
       empty={{
         icon: UsersRound,
         title: "No referred customers yet",
-        description: "When someone signs up or pays through a partner's link or code, they show up here.",
+        description: "People who sign up or pay through a partner's link or code are listed here.",
       }}
     />
   );

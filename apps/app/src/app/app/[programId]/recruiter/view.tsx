@@ -43,8 +43,8 @@ import {
 
 const STEPS = [
   ["Find people", "Rank your Stripe customers, search for creators or add someone you know."],
-  ["Review each draft", "Every invite is written for that person. Edit it before it goes out."],
-  ["Send from your email", "Each invite opens in Gmail or your mail app, so replies come straight to you."],
+  ["Review each draft", "Each invite is drafted for one person. Edit it before you send it."],
+  ["Send from your email", "Each invite opens in Gmail or your mail app. Replies come to you."],
 ] as const;
 
 type P = {
@@ -263,7 +263,7 @@ export function RecruiterView({
               description={
                 tab === "sent"
                   ? "Invites you send show up here with their status."
-                  : "Start with your paying customers. They already like the product."
+                  : "Start with your paying customers. They already use your tool."
               }
             />
             {tab !== "sent" ? (

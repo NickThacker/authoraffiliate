@@ -173,7 +173,7 @@ export default async function CommissionsPage({
       <AutoRefresh />
       <PageHeader
         title="Commissions"
-        description="Commissions in this ledger stay pending through the refund window. After that they are approved and join the next payout. Refunds and chargebacks reverse them automatically."
+        description="Each commission stays pending through the refund window. Then it is approved and goes into the next payout. A refund or chargeback reverses it."
         actions={
           <>
             {viewToggle}

@@ -38,7 +38,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
     {
       when: `Within ${p.cookieDays} days`,
       title: "They buy",
-      text: "The sale is tracked from billing and counts as yours.",
+      text: "When they pay, the sale is credited to you.",
       amount: percent ? `${money(sale)} sale` : undefined,
     },
     {
@@ -64,7 +64,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
         ? 12
         : 1;
   const span = !percent
-    ? "per customer"
+    ? "per referral"
     : p.commissionDuration === "months"
       ? `over ${p.commissionMonths} months`
       : p.commissionDuration === "lifetime"
@@ -95,12 +95,12 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
               </h1>
               <p className="mt-5 max-w-[52ch] text-[16px] leading-7 text-muted">
                 {p.brand.description ??
-                  `Refer customers to ${p.name} and earn a share of what they pay. Every sale is tracked straight from billing.`}
+                  `Recommend ${p.name} to authors you know. When they pay, you get a share.`}
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2">
                 {p.visibility === "invite_only" ? (
                   <p className="rounded-md border border-dashed border-border-strong px-3 py-2 text-[14px] text-muted">
-                    This program is invite-only. Ask the {p.name} team for an invitation link.
+                    This program is invite-only. You need an invite link to join.
                   </p>
                 ) : (
                   <Button asChild variant="primary" size="lg" className="h-11 px-5 text-[14px]">
@@ -119,7 +119,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                 <p className="mt-4 text-[13px] leading-5 text-subtle">
                   {instant
                     ? "Applying takes a minute and most partners are approved on the spot."
-                    : "Applying takes a minute. The team reviews every application."}
+                    : "Applying takes a minute. Each application is reviewed by hand."}
                 </p>
               )}
             </section>
@@ -129,12 +129,12 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
 
             <section aria-labelledby="sale-h" className="border-t border-border py-12">
               <h2 id="sale-h" className="text-[20px] leading-7 font-medium tracking-[-0.02em] text-fg">
-                Follow one sale
+                How one sale pays you
               </h2>
               <p className="mt-1 text-[14px] leading-6 text-muted">
                 {percent
-                  ? `What happens when someone you send pays ${money(sale)}.`
-                  : "What happens when someone you send becomes a customer."}
+                  ? `What happens when someone you refer pays ${money(sale)}.`
+                  : "What happens when an author you refer signs up and pays."}
               </p>
               <ol className="mt-6">
                 {sale_steps.map((x) => (
@@ -166,14 +166,14 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                 </h2>
                 <p className="mt-1 text-[14px] leading-6 text-muted">
                   {percent
-                    ? `An example for customers who pay ${money(sale)}${payments > 1 ? " a month" : ""}.`
-                    : "A fixed amount for every customer you refer."}
+                    ? `If each author you refer pays ${money(sale)}${payments > 1 ? " a month" : ""}.`
+                    : "You earn a fixed amount for each author you refer."}
                 </p>
                 <dl className="mt-6 grid grid-cols-3 border-y border-border">
                   {totals.map(([n, total], i) => (
                     <div key={n} className={`min-w-0 py-5 ${i ? "border-l border-border pl-3 sm:pl-6" : ""}`}>
                       <dt className="text-[13px] leading-5 text-muted">
-                        {n} {n === 1 ? "customer" : "customers"}
+                        {n} {n === 1 ? "referral" : "referrals"}
                       </dt>
                       <dd className="figure mt-1 text-[20px] leading-7 text-fg sm:text-[30px] sm:leading-9">
                         {money(total).replace(/\.00$/, "")}

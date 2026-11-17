@@ -35,7 +35,7 @@ export default async function PortalTraffic({
     <>
       <PageHeader
         title="Traffic"
-        description="Who clicks your links: where they come from, where they are and whether they buy."
+        description="Where your clicks come from and how many of those people go on to pay."
         actions={
           <div className="flex rounded-md border border-border p-0.5 text-[13px]">
             {RANGES.map((d) => (
@@ -58,15 +58,10 @@ export default async function PortalTraffic({
           value={formatNumber(t.clicks)}
           sub={`in the last ${days} days`}
         />
-        <Stat
-          icon={Users}
-          label="Visitors"
-          value={formatNumber(t.visitors)}
-          sub="Different people who clicked"
-        />
+        <Stat icon={Users} label="Visitors" value={formatNumber(t.visitors)} sub="Each person counted once" />
         <Stat
           icon={Target}
-          label="Became customers"
+          label="Paid"
           value={formatNumber(customers)}
           sub={`${t.visitors ? ((customers / t.visitors) * 100).toFixed(1) : "0.0"}% of visitors`}
         />

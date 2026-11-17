@@ -69,7 +69,7 @@ async function onboard(page: Page, product: string, website: string) {
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.getByRole("heading", { name: "Connect Stripe" })).toBeVisible({ timeout: 60_000 });
   await page.getByRole("button", { name: /Skip for now/ }).click();
-  await page.getByRole("button", { name: "Accept this program" }).click();
+  await page.getByRole("button", { name: "Accept these terms" }).click();
   await expect(page.getByRole("heading", { name: "Install tracking" })).toBeVisible();
   await page.getByRole("button", { name: /I'll do this later|Continue/ }).click();
   await page.getByRole("link", { name: "Go to dashboard" }).click();
@@ -983,7 +983,7 @@ test("41 E2E: op.js click → signup lead → Stripe invoice.paid → $60.00 pen
   await expect(row).toContainText("Pending");
   await p.page.goto(`/p/${s.slug}/portal`);
   await expect(p.page.getByText("$60").first()).toBeVisible();
-  await expect(p.page.getByText("became paying customers")).toBeVisible();
+  await expect(p.page.getByText("of them paid")).toBeVisible();
   // replaying the same Stripe event id is idempotent
   await p.ctx.close();
 });
@@ -1363,7 +1363,7 @@ test("71 /network lists only opted-in programs; /partners lists the user's own p
   const ap = await anon.newPage();
   const r = await ap.goto("/network");
   expect(r!.status()).toBe(200);
-  await expect(ap.getByRole("heading", { name: "SaaS programs that pay you every month" })).toBeVisible();
+  await expect(ap.getByRole("heading", { name: "Programs you can join and earn from" })).toBeVisible();
   await expect(ap.getByText(`QA Partner Co ${s.id}`)).toHaveCount(0);
   await ap.goto("/partners");
   await ap.waitForURL(/\/login/);

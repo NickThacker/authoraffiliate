@@ -30,7 +30,7 @@ export default async function PartnerHome() {
             Your partner programs
           </h1>
           <p className="mt-2 text-[14px] text-muted">
-            One login for every program you promote. Pick one to open its portal, or{" "}
+            These are the programs you promote. Pick one to open its portal or{" "}
             <Link href="/network" className="text-accent-text hover:underline">
               find more in the marketplace
             </Link>

@@ -43,7 +43,7 @@ export function PartnerContent({
         <Card id="bounty">
           <CardHeader
             title="Submit a post for a bounty"
-            description="Share the URL of your post or video. It's paid once the team approves it."
+            description="Paste the link to your post or video. You get the bounty once the team approves it."
             action={<Trophy className="size-5 text-subtle" />}
           />
           <CardBody>
@@ -115,7 +115,7 @@ export function PartnerContent({
       ) : null}
       {resources.length ? (
         <Card>
-          <CardHeader title="Resources" description="Files, guides and pages the team recommends." />
+          <CardHeader title="Resources" description="Files and guides from the team." />
           <ul className="divide-y divide-border border-t border-border">
             {resources.map((r) => (
               <li key={r.id} className="px-5 py-3 text-[13px]">

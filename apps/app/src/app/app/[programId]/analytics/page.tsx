@@ -63,7 +63,7 @@ export default async function AnalyticsPage({
     <>
       <PageHeader
         title="Analytics"
-        description="Where partner revenue comes from, how it converts and how long it lasts."
+        description="Where partner revenue comes from and how long referred customers keep paying."
         actions={
           <>
             <RangePicker days={days} base={`/app/${programId}/analytics`} />

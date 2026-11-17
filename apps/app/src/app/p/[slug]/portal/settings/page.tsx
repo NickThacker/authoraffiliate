@@ -8,7 +8,10 @@ export default async function PortalSettings({ params }: { params: Promise<{ slu
   const { partner: pt } = await partnerCtx(slug);
   return (
     <>
-      <PageHeader title="Settings" description="Your emails, and tax details for your commission invoices." />
+      <PageHeader
+        title="Settings"
+        description="Your email settings and the tax details that go on your invoices."
+      />
       <TaxForm
         slug={slug}
         form={pt.taxFormType ?? (pt.country && pt.country !== "US" ? "w8ben" : "w9")}

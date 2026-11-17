@@ -5,8 +5,8 @@ export function DemoBanner({ className = "" }: { className?: string }) {
       className={`flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-border bg-info-soft px-4 py-3 text-[13px] text-fg ${className}`}
     >
       <span>
-        You're exploring the Author Affiliate demo with sample data. Look around freely: changes aren't saved
-        and it resets every night.
+        This is the Author Affiliate demo with sample data. Nothing you change is saved. It resets every
+        night.
       </span>
       <a
         href="https://authoraffiliate.com/signup"

@@ -80,7 +80,7 @@ export default async function PartnersPage({
     <>
       <PageHeader
         title="Partners"
-        description="Everyone promoting your product. Applications that match your rules are approved automatically."
+        description="Everyone who promotes your tool. Applications that match your auto-approve rules are approved without you."
         actions={
           <InviteButton
             programId={programId}

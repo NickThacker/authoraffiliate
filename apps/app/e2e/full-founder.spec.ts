@@ -102,7 +102,7 @@ test("empty states on a brand new program", async () => {
   await go("/customers");
   await expect(page.getByText("No referred customers yet")).toBeVisible();
   await go("/commissions");
-  await expect(page.getByText("Commissions appear after your first referred sale")).toBeVisible();
+  await expect(page.getByText("No commissions yet")).toBeVisible();
   await go("/campaigns");
   await expect(page.getByText("No campaigns yet")).toBeVisible();
   await go("/recruiter");
@@ -1135,7 +1135,7 @@ test("Ask AI in rules mode answers from the ledger", async () => {
   await expect(page.locator("ol > li")).toHaveCount(1);
   await expect(page.locator("ol > li").first()).toContainText(/Ivy Invited|Ada Applicant/);
   await go("");
-  await page.getByPlaceholder("Ask anything…").fill("Any suspicious activity this week?");
+  await page.getByPlaceholder("Ask a question…").fill("Any suspicious activity this week?");
   await page.locator('button[type="submit"][aria-label="Ask"]').click();
   await page.waitForURL(/assistant\?q=Any/);
   await expect(page.locator("ol > li")).toHaveCount(1);

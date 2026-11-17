@@ -50,7 +50,7 @@ export default async function CampaignsPage({
     <>
       <PageHeader
         title="Campaigns"
-        description="Bounties, contests and limited-time commission boosts. Describe it in one sentence; partners are notified when it goes live."
+        description="Run a bounty, a contest or a short commission boost. Describe it in one sentence. Partners are told when it starts."
       />
       <CampaignsView
         programId={programId}

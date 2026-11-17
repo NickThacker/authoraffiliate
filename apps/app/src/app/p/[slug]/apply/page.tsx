@@ -89,9 +89,11 @@ export default async function ApplyPage({
             <p className="eyebrow mt-10">What happens next</p>
             <ol className="mt-4 flex flex-col gap-4">
               {[
-                instant ? "You're approved the moment you apply." : "The team reviews your application.",
+                instant
+                  ? "You're approved the moment you apply."
+                  : "We review your application and email you.",
                 "Your portal opens with your link, QR code and content kit.",
-                "Every sale you refer shows up within seconds.",
+                "Each sale you refer shows up in your portal.",
               ].map((t, i) => (
                 <li key={t} className="flex gap-3 text-[13px] leading-5 text-muted">
                   <span className="num text-[12px] text-subtle">0{i + 1}</span>

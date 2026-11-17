@@ -4,10 +4,10 @@ export type SceneKind = "signin" | "signup";
 
 // ponytail: illustrative figures for the auth panel, not live data
 const RUN: [string, string, string, "Paid" | "Approved" | "Held"][] = [
-  ["MC", "Maya Chen", "$1,240.00", "Paid"],
-  ["LM", "Leo Martins", "$980.00", "Paid"],
-  ["NL", "Nora Lindqvist", "$412.50", "Approved"],
-  ["EP", "Ethan Park", "$96.00", "Held"],
+  ["MC", "Maya Chen", "$14.70", "Paid"],
+  ["LM", "Leo Martins", "$14.70", "Paid"],
+  ["NL", "Nora Lindqvist", "$29.40", "Approved"],
+  ["EP", "Ethan Park", "$8.70", "Held"],
 ];
 const TONE = {
   Paid: "bg-[#3ecf8e]/14 text-[#6ee7b0]",
@@ -16,9 +16,9 @@ const TONE = {
 } as const;
 
 const STEPS: [string, string, boolean][] = [
-  ["Connect Stripe", "A restricted key. Read only.", true],
-  ["Your program, designed", "30% recurring for 12 months · 60-day cookie", true],
-  ["Invite your first partners", "Drafted for your best customers", false],
+  ["Connect Stripe", "With a read-only restricted key", true],
+  ["Set your commission", "30% for 12 months · 60-day cookie", true],
+  ["Invite your first partners", "Start with authors who already use your tools", false],
 ];
 
 const CARD = "rounded-[12px] bg-[#16171a]";
@@ -37,8 +37,8 @@ function PayoutRun() {
   return (
     <div className={CARD}>
       <div className="flex items-center justify-between border-b border-white/8 px-5 py-3.5">
-        <span className="text-[13px] font-medium">November payout run</span>
-        <span className="num text-[12px] text-white/50">Nov 1</span>
+        <span className="text-[13px] font-medium">Your November commissions</span>
+        <span className="num text-[12px] text-white/50">4 authors</span>
       </div>
       <ul className="px-5 py-2">
         {RUN.map(([ini, name, amt, st]) => (
@@ -57,9 +57,9 @@ function PayoutRun() {
         ))}
       </ul>
       <div className="flex items-baseline justify-between border-t border-white/8 px-5 py-3.5">
-        <span className="text-[12px] text-white/55">Through your Stripe account</span>
+        <span className="text-[12px] text-white/55">Next payout Dec 1</span>
         <span className="text-[12px] text-white/55">
-          Author Affiliate fee <span className="num ml-1 text-[15px] font-medium text-white">$0.00</span>
+          Total <span className="num ml-1 text-[15px] font-medium text-white">$67.50</span>
         </span>
       </div>
     </div>
@@ -103,7 +103,7 @@ function Setup() {
         ))}
       </ol>
       <div className="border-t border-white/8 px-5 py-3.5 text-[12px] text-white/55">
-        Free plan up to $1k a month of partner revenue. No card needed.
+        Runs on your own server. No fees come out of partner payouts.
       </div>
     </div>
   );

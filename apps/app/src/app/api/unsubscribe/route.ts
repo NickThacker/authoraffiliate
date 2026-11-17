@@ -37,5 +37,5 @@ export async function POST(req: Request) {
   const t = new URL(req.url).searchParams.get("t") ?? "";
   const what = await applyUnsubscribe(t);
   if (!what) return page("Link not valid", "This unsubscribe link is broken or incomplete.");
-  return page("You're unsubscribed", `You won't get ${esc(what)} by email anymore.`);
+  return page("You're unsubscribed", `You won't get ${esc(what)} from now on.`);
 }

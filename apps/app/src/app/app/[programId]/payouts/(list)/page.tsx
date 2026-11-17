@@ -62,7 +62,7 @@ export default async function PayoutsPage({ params }: { params: Promise<{ progra
     <>
       <PageHeader
         title="Payouts"
-        description={`Partners owed at least ${m(prog.minPayout)} after the ${prog.holdDays}-day hold are paid ${prog.payoutSchedule === "manual" ? "when you click" : prog.payoutSchedule}. Nothing is sent until someone on your team approves it. No fees from us, ever.`}
+        description={`Partners owed at least ${m(prog.minPayout)} after the ${prog.holdDays}-day hold are paid ${prog.payoutSchedule === "manual" ? "when you click" : prog.payoutSchedule}. Nothing is sent until someone on your team approves it.`}
         actions={
           <>
             <Button asChild variant="secondary">

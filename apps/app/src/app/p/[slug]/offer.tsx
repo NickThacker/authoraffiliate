@@ -9,9 +9,9 @@ type P = typeof program.$inferSelect;
 
 export const termLabel = (p: P) =>
   p.commissionDuration === "lifetime"
-    ? "Lifetime of the customer"
+    ? "As long as they pay"
     : p.commissionDuration === "months"
-      ? `${p.commissionMonths} months per customer${afterLabel(p)}`
+      ? `${p.commissionMonths} months per referral${afterLabel(p)}`
       : "First payment only";
 
 export const scheduleLabel = (p: P) =>
@@ -65,7 +65,7 @@ export async function OfferStatement({ p, className }: { p: P; className?: strin
         <div className="mt-1 flex items-baseline gap-2">
           <span className="figure text-[44px] leading-[48px] text-fg">{rateLabel(p)}</span>
           <span className="text-[13px] text-subtle">
-            {p.commissionType === "percent" ? "of every payment" : "per customer"}
+            {p.commissionType === "percent" ? "of every payment" : "per referral"}
           </span>
         </div>
         <div className="mt-5 flex flex-col gap-2.5">

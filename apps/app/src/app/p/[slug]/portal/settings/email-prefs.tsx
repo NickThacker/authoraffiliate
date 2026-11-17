@@ -23,17 +23,13 @@ export function EmailPrefs({
     run(() => emailPrefsAction(slug, next), "Email settings saved");
   };
   const rows = [
-    ["commissions", "Commission earned", "An email each time a referral pays you a commission."],
-    [
-      "messages",
-      "Program messages",
-      "Updates the program team sends to its partners. They also show under Messages.",
-    ],
+    ["commissions", "Commission earned", "An email each time you earn a commission."],
+    ["messages", "Program messages", "News from the team. You can also read it under Messages."],
   ] as const;
   return (
     <SettingsCard
       title="Emails"
-      description="Choose what reaches your inbox. Approvals, payouts and sign-in emails always arrive."
+      description="Pick which emails you get. We always send approval, payout and sign-in emails."
     >
       <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
         {rows.map(([key, label, hint]) => (

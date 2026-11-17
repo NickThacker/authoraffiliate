@@ -278,7 +278,7 @@ test.describe("onboarding", () => {
     const { ctx, page } = await newPage(browser, "onboarding");
     await signUp(page, "Olive Onboard", `onb-${id}@e2e.test`);
     await page.waitForURL(/\/onboarding/);
-    await expect(page.getByRole("heading", { name: /What are you selling, Olive/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Which tool is this program for, Olive/ })).toBeVisible();
     await page.getByLabel("Website URL").fill("http://127.0.0.1:3000");
     await page.getByLabel("Product name").fill(`Onbco ${id}`);
     await page.getByRole("button", { name: "Continue" }).click();
@@ -289,7 +289,7 @@ test.describe("onboarding", () => {
     await page.getByRole("button", { name: /Skip for now/ }).click();
     await page.getByRole("button", { name: "Keep the defaults and edit later" }).click();
     await expect(page.getByRole("heading", { name: "Install tracking" })).toBeVisible();
-    for (const tab of ["Paste into your AI agent", "npm SDK", "Script tag"]) {
+    for (const tab of ["Prompt for a coding agent", "npm SDK", "Script tag"]) {
       await page.getByRole("tab", { name: tab }).click();
       await expect(page.getByRole("tab", { name: tab })).toHaveAttribute("aria-selected", "true");
     }
@@ -927,13 +927,13 @@ test.describe("team", () => {
         PASSWORD,
         `?next=${encodeURIComponent(token)}&email=${encodeURIComponent(who.email)}`,
       );
-      // accepting must land in the program, not on "Invitation problem"
+      // accepting must land in the program, not on "This invite didn't work"
       await m.page.waitForLoadState("load");
       await m.page.waitForTimeout(1500);
       expect.soft(m.page.url(), `${role} landing after accept`).toContain(programId);
       expect
         .soft(
-          await m.page.getByText("Invitation problem").count(),
+          await m.page.getByText("This invite didn't work").count(),
           `${role} sees an error after a successful accept`,
         )
         .toBe(0);

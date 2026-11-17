@@ -171,7 +171,7 @@ export function LinksCard({
     <Card>
       <CardHeader
         title="Links"
-        description="Short links, deep links and sub-IDs. Every link works with first-party cookies and server-side Stripe attribution."
+        description="Short links, deep links and sub-IDs. Each link is tracked with a first-party cookie and through Stripe on your server."
         action={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>

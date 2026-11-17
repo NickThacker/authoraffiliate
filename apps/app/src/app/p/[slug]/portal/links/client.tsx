@@ -55,7 +55,7 @@ export function PartnerLinks({
       <Card>
         <CardHeader
           title="Create a link"
-          description="Point it at any page on the site. Add a sub-ID to see which channel works best."
+          description="It can go to any page on the site. Add a sub-ID like youtube or newsletter to tell your links apart."
         />
         <form
           className="grid gap-4 border-t border-border p-5 sm:grid-cols-[minmax(0,1fr)_180px_auto] sm:items-end"
@@ -83,12 +83,15 @@ export function PartnerLinks({
       </Card>
 
       <Card className="mt-4">
-        <CardHeader title="Your links" description="Clicks and paying customers for each link you share." />
+        <CardHeader
+          title="Your links"
+          description="How many clicks each link got and how many people paid."
+        />
         <ul className="divide-y divide-border border-t border-border">
           <li className="hidden h-9 items-center gap-4 bg-surface-2 px-5 sm:flex" aria-hidden>
             <span className="eyebrow flex-1">Link</span>
             <span className="eyebrow w-16 text-right">Clicks</span>
-            <span className="eyebrow w-20 text-right">Customers</span>
+            <span className="eyebrow w-20 text-right">Paid</span>
             <span className="w-[60px]" />
           </li>
           <LinkRow
@@ -139,7 +142,7 @@ function LinkRow(props: {
       </span>
       <span className="num text-[13px] text-fg sm:w-20 sm:text-right">
         {formatNumber(props.customers)}
-        <span className="text-subtle sm:hidden"> customers</span>
+        <span className="text-subtle sm:hidden"> paid</span>
       </span>
       <span className="ml-auto flex items-center gap-1 sm:ml-0">
         <Tooltip content="QR code">

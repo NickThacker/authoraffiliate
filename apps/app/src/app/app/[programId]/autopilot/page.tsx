@@ -22,7 +22,7 @@ export default async function AutopilotPage({ params }: { params: Promise<{ prog
     <>
       <PageHeader
         title="Autopilot"
-        description="Every week Autopilot reviews your program and either suggests or takes the next best actions. Everything it does is logged here with an undo. It never moves money."
+        description="Autopilot reviews your program once a week and suggests what to do next. Some steps it can take itself. Each one is logged here and can be undone. It never moves money."
       />
       <AutopilotView
         programId={programId}

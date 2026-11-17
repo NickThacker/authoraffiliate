@@ -90,7 +90,7 @@ async function onboard(page: Page, name: string, email: string) {
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.getByRole("heading", { name: "Connect Stripe" })).toBeVisible();
   await page.getByRole("button", { name: /Skip for now/ }).click();
-  await page.getByRole("button", { name: "Accept this program" }).click();
+  await page.getByRole("button", { name: "Accept these terms" }).click();
   await expect(page.getByRole("heading", { name: "Install tracking" })).toBeVisible();
   await page.getByRole("button", { name: /I'll do this later|Continue/ }).click();
   await page.getByRole("link", { name: "Go to dashboard" }).click();

@@ -142,7 +142,7 @@ export default async function Dashboard({
     },
     {
       done: !!prog.designRationale,
-      label: "Accept program design",
+      label: "Accept program terms",
       href: `/onboarding?program=${programId}&step=3`,
     },
     { done: !!prog.installVerifiedAt, label: "Install tracking", href: `${base}/settings/install` },
@@ -436,7 +436,7 @@ export default async function Dashboard({
               icon={Users}
               mascot="hello"
               title="No partner activity yet"
-              description="Revenue shows up here as soon as a referred customer pays."
+              description="Partners show up here once their links get clicks."
               action={
                 <Button asChild variant="primary">
                   <Link href={`${base}/recruiter`}>Invite partners</Link>
@@ -452,7 +452,7 @@ export default async function Dashboard({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-[15px] font-medium tracking-[-0.01em] text-fg">Commission board</h2>
-            <p className="text-xs text-subtle">Where each commission sits right now, sorted newest first</p>
+            <p className="text-xs text-subtle">The newest commissions at each stage</p>
           </div>
           <Link
             href={`${base}/commissions?view=board`}
@@ -592,7 +592,7 @@ function PayoutCard({
         </span>
       </div>
       <div className="figure mt-3 text-[30px] leading-9">{balance}</div>
-      <p className="text-xs text-white/60">owed across every partner right now</p>
+      <p className="text-xs text-white/60">owed to all partners right now</p>
       <dl className="mt-4 flex flex-col gap-2 text-[13px]">
         {lines.map(([k, v]) => (
           <div key={k} className="flex items-center">
@@ -656,7 +656,7 @@ function AgentCard({ base, program }: { base: string; program: string }) {
           <span className="sr-only">Ask the agent</span>
           <input
             name="q"
-            placeholder="Ask anything…"
+            placeholder="Ask a question…"
             autoComplete="off"
             className="h-7 min-w-0 flex-1 bg-transparent px-1.5 text-[13px] text-fg placeholder:text-subtle focus-visible:outline-none"
           />

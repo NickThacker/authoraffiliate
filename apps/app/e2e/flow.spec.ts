@@ -25,9 +25,9 @@ test.describe
       await page.getByRole("button", { name: "Continue" }).click();
       await expect(page.getByRole("heading", { name: "Connect Stripe" })).toBeVisible();
       await page.getByRole("button", { name: /Skip for now/ }).click();
-      await expect(page.getByRole("button", { name: "Accept this program" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Accept these terms" })).toBeVisible();
       await expect(page.getByText("Commission", { exact: true })).toBeVisible();
-      await page.getByRole("button", { name: "Accept this program" }).click();
+      await page.getByRole("button", { name: "Accept these terms" }).click();
       await expect(page.getByRole("heading", { name: "Install tracking" })).toBeVisible();
       await page.getByRole("button", { name: /I'll do this later|Continue/ }).click();
       await expect(page.getByRole("heading", { name: /partner program is live/ })).toBeVisible();

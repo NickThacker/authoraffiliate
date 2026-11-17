@@ -45,7 +45,7 @@ export default async function PortalContent({
     <>
       <PageHeader
         title="Content kit"
-        description="Posts, emails and banners ready to share. Your link is already filled in."
+        description="Copy any of these and share it. Your link is already in each one."
       />
       <PartnerContent
         slug={slug}

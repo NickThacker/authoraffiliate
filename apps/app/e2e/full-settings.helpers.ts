@@ -109,7 +109,7 @@ export async function newFounder(page: Page, name: string, email: string, produc
   await page.getByLabel("Product name").fill(product);
   await page.getByRole("button", { name: "Continue" }).click();
   await page.getByRole("button", { name: /Skip for now/ }).click();
-  await page.getByRole("button", { name: "Accept this program" }).click();
+  await page.getByRole("button", { name: "Accept these terms" }).click();
   await page.getByRole("button", { name: /I'll do this later|Continue/ }).click();
   await page.getByRole("link", { name: "Go to dashboard" }).click();
   await page.waitForURL(/\/app\/prg_/);

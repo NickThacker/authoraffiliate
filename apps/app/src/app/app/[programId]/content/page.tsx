@@ -34,7 +34,7 @@ export default async function ContentPage({ params }: { params: Promise<{ progra
     <>
       <PageHeader
         title="Content kit"
-        description="Copy, posts, emails and banners your partners can use straight away. Generated from your website and refreshed when your site changes. Partners see it with their own link filled in."
+        description="Posts, emails and banners for partners to share. We draft them from your website and update them when it changes. Each partner sees their own link filled in."
       />
       <ContentView
         programId={programId}

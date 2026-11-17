@@ -83,7 +83,7 @@ export default async function PortalPayouts({
         />
       </div>
       <Card className="mt-4">
-        <CardHeader title="History" description="Paid payouts come with a self-billed invoice." />
+        <CardHeader title="History" description="Each payout comes with a self-billed invoice." />
         {rows.length ? (
           <ul className="divide-y divide-border border-t border-border">
             {rows.map((r) => (

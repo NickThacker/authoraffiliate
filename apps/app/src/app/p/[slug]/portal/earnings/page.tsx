@@ -70,7 +70,7 @@ export default async function PortalEarnings({
       />
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <Card className="min-w-0">
-          <CardHeader title="Daily earnings" description="Last 60 days with refunds already taken off." />
+          <CardHeader title="Daily earnings" description="The last 60 days, after refunds." />
           <CardBody>
             <DotChart
               data={series}
@@ -117,7 +117,7 @@ export default async function PortalEarnings({
       <Card className="mt-4">
         <CardHeader
           title="Statement"
-          description="Every commission with the newest first."
+          description="Each commission you've earned, newest first."
           action={
             <Button asChild size="sm">
               <a href={`${home}/portal/earnings/csv`}>
@@ -200,7 +200,7 @@ export default async function PortalEarnings({
           <EmptyState
             icon={Coins}
             title="No earnings yet"
-            description="The commission lands here within seconds each time someone you referred pays."
+            description="When someone you referred pays, your commission shows up here within a few seconds."
             className="border-t border-border"
           />
         )}

@@ -14,7 +14,7 @@ import { Filters, JoinButton } from "./client";
 export const metadata: Metadata = {
   title: "Partner marketplace",
   description:
-    "Affiliate programs from SaaS companies. Filter by category and commission type and apply in one click.",
+    "Affiliate programs for tools authors use. Find one that fits your audience and apply from your account.",
 };
 export const dynamic = "force-dynamic";
 
@@ -55,11 +55,10 @@ export default async function NetworkPage({
         <div className="mx-auto w-full max-w-[1100px] px-4 py-12 sm:px-8 sm:py-16">
           <span className="eyebrow">[ Partner marketplace ]</span>
           <h1 className="mt-4 max-w-[20ch] text-[36px] leading-10 font-medium tracking-[-0.035em] text-fg">
-            SaaS programs that pay you every month
+            Programs you can join and earn from
           </h1>
           <p className="mt-3 max-w-[60ch] text-[15px] leading-6 text-muted">
-            Affiliate programs you can join today. Every one pays through Author Affiliate with no fees taken
-            from your commissions.{" "}
+            Each program here pays commissions on tools for authors. No fees come out of what you earn.{" "}
             {u ? "Apply with one click from your account." : "Sign in to apply with one click."}
           </p>
           <div className="mt-8">
@@ -163,7 +162,7 @@ export default async function NetworkPage({
               description={
                 filtered
                   ? "Try another category or commission type."
-                  : "Founders can list their program from Settings. Check back soon."
+                  : "Programs show up here once their owners list them. Check back soon."
               }
               className="mt-6 rounded-xl border border-dashed border-border-strong"
             />

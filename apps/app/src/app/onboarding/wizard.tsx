@@ -33,9 +33,9 @@ type Initial = {
 
 const STEPS = [
   ["Your product", "Website, name and brand"],
-  ["Connect Stripe", "Payments for attribution"],
+  ["Connect Stripe", "To credit sales to partners"],
   ["Design program", "Commission and terms"],
-  ["Install", "One line of tracking"],
+  ["Install", "Add the tracking script"],
   ["Done", "Invite your partners"],
 ] as const;
 const nn = (n: number) => String(n).padStart(2, "0");
@@ -187,8 +187,8 @@ function StepProduct({ userName }: { userName: string }) {
     <section>
       <StepHeader
         n={1}
-        title={`What are you selling, ${userName.split(" ")[0]}?`}
-        text="Paste your website. We read your logo, colors and copy to brand your partner portal, and draft your content kit."
+        title={`Which tool is this program for, ${userName.split(" ")[0]}?`}
+        text="Paste your tool's website. We use its logo and colors on your partner portal. We also draft promo copy from its pages."
       />
       <form
         className="flex flex-col gap-6"
@@ -207,7 +207,7 @@ function StepProduct({ userName }: { userName: string }) {
           <Input
             id="url"
             name="url"
-            placeholder="yourapp.com"
+            placeholder="yourtool.com"
             required
             autoFocus
             className="h-11 text-[15px]"
@@ -245,7 +245,7 @@ function StepStripe({
       <StepHeader
         n={2}
         title="Connect Stripe"
-        text="Author Affiliate reads payments from Stripe to attribute sales and calculate commissions even when cookies are blocked. Create a restricted key so it can only do what it needs."
+        text="Author Affiliate reads your Stripe payments to credit sales to partners and work out commissions. This works even when cookies are blocked. A restricted key limits it to the access it needs."
       />
       {initial.stripeConnected ? (
         <div className="mb-8 flex items-center gap-3 rounded-lg border border-border bg-success-soft px-4 py-3">
@@ -407,8 +407,8 @@ function StepDesign({ programId, onDone }: { programId: string; onDone: () => vo
     <section>
       <StepHeader
         n={3}
-        title="Your program designed for your pricing"
-        text="We looked at your prices and picked the terms that the best SaaS programs use for a business like yours. Accept with one click and change anything later."
+        title="Suggested program terms"
+        text="We based these terms on your prices. Accept them now and change any of them later in Settings."
       />
       {!design ? (
         <div className="overflow-hidden rounded-xl border border-border" aria-busy="true">
@@ -430,7 +430,7 @@ function StepDesign({ programId, onDone }: { programId: string; onDone: () => vo
             <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
               <span className="eyebrow">Program terms</span>
               <Badge tone={design.source === "ai" ? "primary" : "neutral"} dot>
-                {design.source === "ai" ? "Designed by AI" : "Designed from your pricing"}
+                {design.source === "ai" ? "Suggested by AI" : "Based on your prices"}
               </Badge>
             </div>
             <ol>
@@ -465,7 +465,7 @@ function StepDesign({ programId, onDone }: { programId: string; onDone: () => vo
                 })
               }
             >
-              <Check /> Accept this program
+              <Check /> Accept these terms
             </Button>
             <Button variant="ghost" size="lg" onClick={onDone}>
               Keep the defaults and edit later
@@ -493,7 +493,7 @@ function StepInstall({ initial, onDone }: { initial: NonNullable<Initial>; onDon
   }, [verified, initial.programId]);
   const tabs = [
     { id: "script", label: "Script tag" },
-    { id: "ai", label: "Paste into your AI agent" },
+    { id: "ai", label: "Prompt for a coding agent" },
     { id: "npm", label: "npm SDK" },
   ] as const;
   return (
@@ -501,7 +501,7 @@ function StepInstall({ initial, onDone }: { initial: NonNullable<Initial>; onDon
       <StepHeader
         n={4}
         title="Install tracking"
-        text="One line on your site. Stripe Payment Links and Pricing Tables are picked up automatically; for custom checkouts, pass the click id to Stripe."
+        text="Add one script tag to your site. Stripe Payment Links and Pricing Tables then work with no other changes. If you built your own checkout, also pass the click id to Stripe."
       />
       <div
         role="tablist"
@@ -531,8 +531,8 @@ function StepInstall({ initial, onDone }: { initial: NonNullable<Initial>; onDon
       ) : tab === "ai" ? (
         <div>
           <p className="mb-3 text-[13px] leading-5 text-muted">
-            Works in Claude Code, Codex, Cursor, Copilot or any other coding agent. It wires tracking and
-            server-side conversion into your codebase and leaves your prices alone.
+            Paste this into Claude Code, Codex, Cursor or another coding agent. It adds the script and the
+            server-side checkout change. It does not touch your prices.
           </p>
           <Textarea
             readOnly
@@ -599,7 +599,7 @@ function StepDone({ initial }: { initial: NonNullable<Initial> }) {
       <StepHeader
         n={5}
         title={`${initial.name}'s partner program is live`}
-        text="Autopilot now watches the program every week. Invite your first partners: the recruiter has already lined up your happiest paying customers."
+        text="Autopilot reviews the program once a week. Next, invite your first partners. The recruiter lists paying customers who may want to promote your tool."
       />
       <div className="mb-8 overflow-hidden rounded-xl border border-border ">
         <div className="flex items-center justify-between border-b border-border px-5 py-3">
